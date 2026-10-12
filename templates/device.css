@@ -20,7 +20,7 @@ body[data-platform="android"] { --safe-top: 36px; --safe-bottom: 24px; }
 body[data-status="light"] .sb { color: #fff; }
 body[data-platform="ios"] .sb { height: 54px; padding: 4px 30px 0 46px; font-size: 17px; font-weight: 600; letter-spacing: -0.02em; }
 body[data-platform="android"] .sb {
-  height: 36px; padding: 0 20px 0 24px; font-size: 14px; font-weight: 500;
+  height: 36px; padding: 2px 30px 0 30px; font-size: 14px; font-weight: 500;
   font-family: "Roboto Flex Variable", system-ui, sans-serif;
 }
 .sb .sb-icons { display: flex; gap: 6px; align-items: center; }
