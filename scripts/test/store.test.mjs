@@ -26,6 +26,7 @@ test("store assets at required sizes; iOS icon has no alpha", { timeout: 60_000 
   assert.deepEqual(wh("android/adaptive-foreground.png"), [432, 432]);
   assert.deepEqual(wh("android/adaptive-background.png"), [432, 432]);
   assert.deepEqual(wh("android/feature-graphic.png"), [1024, 500]);
+  assert.equal(meta(out("android/feature-graphic.png")).colorType, 2, "Play feature graphic must be 24-bit PNG without alpha");
 });
 
 test("a missing referenced file exits 2 and names it", () => {

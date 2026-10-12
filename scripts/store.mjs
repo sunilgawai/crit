@@ -25,6 +25,10 @@ const out = join(design, "store", "out");
 const tmp = join(design, "store", ".tmp.html");
 const fontsCss = existsSync(join(design, "fonts", "fonts.css")) ? pathToFileURL(join(design, "fonts", "fonts.css")).href : null;
 const written = [];
+const toRgb = (buf, background = "#fff") => {
+  const bg = parseColor(background) ?? { r: 255, g: 255, b: 255 };
+  return PNG.sync.write(PNG.sync.read(buf), { colorType: 2, inputHasAlpha: true, bgColor: { red: bg.r, green: bg.g, blue: bg.b } });
+};
 const browser = await launch();
 
 async function shoot(html, { width, height, scale = 1 }, file, { transparent = false } = {}) {
@@ -55,8 +59,7 @@ try {
     const file = join(out, "ios", "icon-1024.png");
     const buf = await shoot(iconHtml(svg), { width: 1024, height: 1024 }, file);
     // App Store rejects icons with an alpha channel, even a fully opaque one: re-encode as RGB.
-    const bg = parseColor(cfg.background ?? "#fff") ?? { r: 255, g: 255, b: 255 };
-    writeFileSync(file, PNG.sync.write(PNG.sync.read(buf), { colorType: 2, inputHasAlpha: true, bgColor: { red: bg.r, green: bg.g, blue: bg.b } }));
+    writeFileSync(file, toRgb(buf, cfg.background));
     await shoot(iconHtml(svg), { width: 512, height: 512 }, join(out, "android", "icon-512.png"), { transparent: true });
   }
 
@@ -73,7 +76,8 @@ try {
     await page.evaluate(() => document.fonts.ready);
     const file = join(out, "android", "feature-graphic.png");
     mkdirSync(join(file, ".."), { recursive: true });
-    await page.screenshot({ path: file });
+    // Play requires the feature graphic as JPEG or 24-bit PNG (no alpha).
+    writeFileSync(file, toRgb(await page.screenshot(), cfg.background));
     written.push(file);
   }
 } finally {
