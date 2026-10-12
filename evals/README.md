@@ -10,7 +10,7 @@ Run projects live **outside this repo**, in `~/crit-evals/<date>/<brief>/{baseli
 
 ## Skill prompt
 
-> Read `~/.claude/skills/crit/SKILL.md` and follow it exactly, in autonomous mode (take the critic's pick at every ★ gate; don't ask questions). `$SKILL` is `~/.claude/skills/crit`. The project root is `<dir>`. Brief: <brief>. Run phases <range>.
+> Read `~/.claude/skills/crit/SKILL.md` (the dev symlink to `plugin/skills/crit/`) and follow it exactly, in autonomous mode (take the critic's pick at every ★ gate; don't ask questions). `$SKILL` is `~/.claude/skills/crit`. The project root is `<dir>`. Brief: <brief>. Run phases <range>.
 
 ## Pass condition
 

@@ -1,0 +1,12 @@
+{
+  "name": "crit",
+  "description": "Crit: studio-grade app design for Claude Code.",
+  "owner": { "name": "Sunil Gawai" },
+  "plugins": [
+    {
+      "name": "crit",
+      "source": "./plugin",
+      "description": "Designs iPhone and Android apps a stranger would remember, judged by a strict critic, and makes the launch kit."
+    }
+  ]
+}
