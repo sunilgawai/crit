@@ -1,0 +1,32 @@
+/* Design tokens — the single source of truth for this app's look.
+   Phase 3 replaces every value below with the chosen direction's. */
+:root {
+  /* World: the tinted ground every screen sits on (not white, not grey) */
+  --world: #F3EEE4;
+  --world-2: #EAE3D6;      /* a deeper step of the world, for wells and pressed states */
+  --surface: #FFFDF8;      /* cards */
+  /* Ink: near-black pulled toward the world's hue */
+  --ink: #1C1A17;
+  --ink-2: #4A453E;
+  --ink-3: #7A7368;        /* only for ≥ 15px text; check contrast */
+  --rule: rgba(28, 26, 23, 0.12);
+  /* Signal: the one loud colour — primary action, active tab, one datum */
+  --signal: #E8501A;
+  --on-signal: #FFFFFF;
+
+  /* Type */
+  --font-display: system-ui, BlinkMacSystemFont, sans-serif;   /* wordmarks, numerals */
+  --font-voice: Georgia, serif;                                /* sentences with character */
+  --font-text: system-ui, BlinkMacSystemFont, sans-serif;      /* iOS: SF Pro. Android: 'Roboto Flex Variable' */
+
+  /* Radii: pick per concept, then keep to the scale */
+  --r-s: 8px; --r-m: 14px; --r-l: 20px; --r-xl: 28px; --r-full: 999px;
+  /* Spacing: 4pt grid */
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 20px; --s-6: 24px; --s-8: 32px; --s-10: 40px; --s-12: 48px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+  --t-fast: 120ms; --t-base: 240ms; --t-slow: 400ms; --t-scene: 700ms;
+}
+body[data-platform="android"] { --font-text: "Roboto Flex Variable", system-ui, sans-serif; }

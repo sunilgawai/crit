@@ -12,7 +12,8 @@ export function platformFromPath(file) {
 }
 
 export function launch() {
-  return chromium.launch();
+  // file:// pages may reference sibling files (external <use href>, fetch); Chromium blocks that by default.
+  return chromium.launch({ args: ["--allow-file-access-from-files"] });
 }
 
 export async function openScreen(browser, file) {
