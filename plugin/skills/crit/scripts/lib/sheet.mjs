@@ -1,3 +1,5 @@
+const escapeHtml = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
 /** HTML for a contact sheet: renders in device frames, in a row, on a soft ground (like a studio presentation). */
 export function sheetHtml({ images, bg = "radial-gradient(120% 120% at 50% 0%, #FFFFFF 0%, #ECEEF2 100%)", labels = [] }) {
   const W = 300; // CSS px per device
@@ -7,7 +9,7 @@ export function sheetHtml({ images, bg = "radial-gradient(120% 120% at 50% 0%, #
     .map(({ dataUri, width, height, platform = "ios" }, i) => {
       const ios = platform !== "android";
       const h = Math.round((W * height) / width);
-      const label = labels[i] ? `<figcaption>${labels[i]}</figcaption>` : "";
+      const label = labels[i] ? "<figcaption>" + escapeHtml(labels[i]) + "</figcaption>" : "";
       return `<figure><div class="frame ${ios ? "ios" : "android"}" style="width:${W}px;height:${h}px">
         <img src="${dataUri}" width="${W}" height="${h}">
         ${ios ? '<i class="island"></i>' : '<i class="punch"></i>'}
