@@ -1,9 +1,9 @@
 ---
-name: app-designer-pro
+name: crit
 description: Use when designing or redesigning a mobile app's screens (iPhone and Android), or producing its launch material (onboarding, paywall, motion videos, App Store and Google Play screenshots and icons), and the result must look studio-made rather than AI-generated.
 ---
 
-# App Designer Pro
+# Crit
 
 Designs an app the way a good studio would, then makes everything that sells it. The output is HTML screens at device size (the design source of truth), PNG renders, MP4 motion, store assets and a handoff spec, all in `design/` under the current project.
 

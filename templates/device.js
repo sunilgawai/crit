@@ -1,5 +1,5 @@
 // Injects the status bar and home indicator / gesture handle into a screen.
-// Provided by app-designer-pro — do not edit. Opt out with <body data-chrome="none">.
+// Provided by crit — do not edit. Opt out with <body data-chrome="none">.
 (() => {
   const b = document.body;
   if (!b || b.dataset.chrome === "none") return;

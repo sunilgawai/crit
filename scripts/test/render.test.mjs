@@ -55,7 +55,7 @@ test("sheet lays four renders out in one row", () => {
 
 test("scripts run when invoked through a symlinked skill directory", () => {
   const cwd = fixtureProject();
-  const link = join(mkdtempSync(join(tmpdir(), "adp-link-")), "app-designer-pro");
+  const link = join(mkdtempSync(join(tmpdir(), "adp-link-")), "crit");
   symlinkSync(SKILL_DIR, link);
   for (const script of ["render.mjs", "scan.mjs"]) {
     const r = node(cwd, join(link, "scripts", script), "design/screens/ios/01-clean.html");

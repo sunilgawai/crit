@@ -10,7 +10,7 @@ Runs live in `evals/runs/<date>/<brief>/{baseline,skill}/` (gitignored). Results
 
 ## Skill prompt
 
-> Read `~/.claude/skills/app-designer-pro/SKILL.md` and follow it exactly, in autonomous mode (take the critic's pick at every ★ gate; don't ask questions). `$SKILL` is `~/.claude/skills/app-designer-pro`. The project root is `<dir>`. Brief: <brief>. Run phases <range>.
+> Read `~/.claude/skills/crit/SKILL.md` and follow it exactly, in autonomous mode (take the critic's pick at every ★ gate; don't ask questions). `$SKILL` is `~/.claude/skills/crit`. The project root is `<dir>`. Brief: <brief>. Run phases <range>.
 
 ## Pass condition
 
