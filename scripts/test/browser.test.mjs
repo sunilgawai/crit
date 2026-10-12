@@ -18,3 +18,9 @@ test("system-ui resolves to SF Pro on this Mac", { skip: process.platform !== "d
     await browser.close();
   }
 });
+
+test("platform comes from the path inside design/, not from folders above it", () => {
+  assert.equal(platformFromPath("/work/android/proj/design/screens/ios/01.html"), "ios");
+  assert.equal(platformFromPath("/work/android/proj/design/renders/screens/ios/01.png"), "ios");
+  assert.equal(platformFromPath("/work/ios/proj/design/screens/android/01.html"), "android");
+});

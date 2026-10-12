@@ -25,12 +25,14 @@ async function htmlFilesIn(dir) {
     .sort();
 }
 
-/** Files are kept as given (resolved); directories expand to their **\/*.html. */
+/** Files are kept as given (resolved); directories expand to their **\/*.html.
+ *  An argument that doesn't exist exits 2: a typo must never look like a clean result. */
 export async function expandInputs(args) {
+  const missing = args.filter((a) => !existsSync(resolve(a)));
+  if (missing.length) fail(`not found: ${missing.join(", ")}`);
   const out = [];
   for (const arg of args) {
     const p = resolve(arg);
-    if (!existsSync(p)) continue;
     if (statSync(p).isDirectory()) out.push(...(await htmlFilesIn(p)));
     else out.push(p);
   }

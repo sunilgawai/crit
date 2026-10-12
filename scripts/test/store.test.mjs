@@ -58,3 +58,13 @@ test("headline weight comes from store.json and is never synthesised", async () 
   assert.match(html, /font-weight:400/);
   assert.match(html, /font-synthesis:none/);
 });
+
+test("nothing to build, or an unknown key, exits 2 instead of a silent success", () => {
+  const cwd = fixtureProject();
+  writeFileSync(join(cwd, "design/store/store.json"), JSON.stringify({ background: "#fff", ink: "#111", ios: [], android: [] }));
+  assert.equal(store(cwd).status, 2);
+  writeFileSync(join(cwd, "design/store/store.json"), JSON.stringify({ background: "#fff", screenshots: { ios: [] }, icon: "store/icon.svg" }));
+  const r = store(cwd);
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /screenshots/);
+});

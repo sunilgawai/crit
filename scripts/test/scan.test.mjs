@@ -112,3 +112,40 @@ test("a sprite that is invalid XML or lacks the symbol is an error, not a blank 
   findings = scan(cwd, f).findings.filter((x) => x.rule === "broken-illustration");
   assert.ok(findings.some((x) => /not valid XML/.test(x.detail)), JSON.stringify(findings));
 });
+
+const page = (body, head = "") => `<!doctype html><html><head><link rel="stylesheet" href="../../device.css">${head}</head>
+  <body data-platform="ios" data-screen-kind="main" style="background:#F3EEE4;color:#1C1A17">${body}</body></html>`;
+
+test("a font that isn't installed or loaded is an error (it would silently fall back)", () => {
+  const cwd = fixtureProject();
+  const f = join(cwd, "design/screens/ios/09-font.html");
+  writeFileSync(f, page(`<h1 style="font:700 64px 'Fraunces', serif;margin:120px 20px">€49</h1>`));
+  assert.ok(scan(cwd, f).findings.some((x) => x.rule === "font-missing" && /Fraunces/.test(x.detail)));
+  writeFileSync(f, page(`<h1 style="font:700 64px Georgia, serif;margin:120px 20px">€49</h1>`));
+  assert.ok(!scan(cwd, f).findings.some((x) => x.rule === "font-missing"));
+});
+
+test("a stylesheet that doesn't load is an error", () => {
+  const cwd = fixtureProject();
+  const f = join(cwd, "design/screens/ios/10-css.html");
+  writeFileSync(f, page(`<p style="margin:120px 20px">Hello there.</p>`, `<link rel="stylesheet" href="../fonts/fonts.css">`));
+  assert.ok(scan(cwd, f).findings.some((x) => x.rule === "stylesheet-missing" && /fonts\.css/.test(x.detail)));
+});
+
+test("contrast uses what is actually drawn behind the text, in any CSS colour syntax", () => {
+  const cwd = fixtureProject();
+  const f = join(cwd, "design/screens/ios/11-backdrop.html");
+  // white text over a navy shape that is a sibling, not an ancestor
+  writeFileSync(f, page(`<div style="position:absolute;left:0;top:100px;width:402px;height:200px;background:#13233C"></div>
+    <h1 style="position:absolute;left:20px;top:150px;margin:0;font:700 72px Georgia;color:#fff">€49</h1>
+    <div style="position:absolute;left:20px;top:400px;padding:16px;background:oklch(0.25 0.05 260);color:#fff;font:17px system-ui">Dark oklch card</div>`));
+  assert.ok(!scan(cwd, f).findings.some((x) => x.rule === "contrast"), JSON.stringify(scan(cwd, f).findings));
+  writeFileSync(f, page(`<p style="margin:120px 20px;font:17px system-ui;color:oklch(0.93 0.01 80)">Pale oklch text</p>`));
+  assert.ok(scan(cwd, f).findings.some((x) => x.rule === "contrast"));
+});
+
+test("an input path that doesn't exist fails instead of being skipped", () => {
+  const r = spawnSync(process.execPath, [join(SKILL_DIR, "scripts/scan.mjs"), "design/screens/ios/01-clean.html", "design/screens/andriod"], { cwd: fixtureProject(), encoding: "utf8" });
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /andriod/);
+});

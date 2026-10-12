@@ -7,8 +7,13 @@ export const DEVICES = {
   android: { width: 412, height: 915, scale: 2.625 },
 };
 
+/** "android" iff the path *inside* the nearest design/ folder has an android segment
+ *  (folders above design/, e.g. a monorepo's apps/android, don't count). */
 export function platformFromPath(file) {
-  return file.split(sep).includes("android") ? "android" : "ios";
+  const parts = file.split(sep);
+  const d = parts.lastIndexOf("design");
+  const inner = d === -1 ? parts.slice(-2, -1) : parts.slice(d + 1, -1);
+  return inner.includes("android") ? "android" : "ios";
 }
 
 export function launch() {

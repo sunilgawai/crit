@@ -2,7 +2,7 @@
 // Usage: node capture.mjs <scene.html> [--out file.mp4] [--stills N]
 // --stills N also saves N evenly spaced frames to out/<scene>-stills/1.png… for review.
 // Deterministic frame-by-frame capture of a motion scene (see references/motion.md) to MP4.
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, relative, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { fail } from "./lib/paths.mjs";
@@ -14,9 +14,11 @@ const o = args.indexOf("--out");
 const outArg = o === -1 ? null : args.splice(o, 2)[1];
 const si = args.indexOf("--stills");
 const stills = si === -1 ? 0 : Number(args.splice(si, 2)[1]);
+if (!Number.isInteger(stills) || stills < 0) fail("--stills needs a whole number, e.g. --stills 4");
 const scene = args[0];
 if (!scene) fail("usage: capture.mjs <scene.html> [--out file.mp4]");
 const file = resolve(scene);
+if (!existsSync(file) || !statSync(file).isFile()) fail(`scene not found: ${scene}`);
 const out = resolve(outArg ?? join(dirname(file), "out", basename(file).replace(/\.html$/, ".mp4")));
 
 const browser = await launch();
@@ -39,8 +41,8 @@ try {
   const frames = Math.round((duration / 1000) * fps);
   const stillDir = out.replace(/\.mp4$/, "-stills");
   const stillAt = new Map();
+  rmSync(stillDir, { recursive: true, force: true }); // never leave stills from an earlier capture
   if (stills > 0) {
-    rmSync(stillDir, { recursive: true, force: true });
     mkdirSync(stillDir, { recursive: true });
     for (let k = 0; k < stills; k++) stillAt.set(stills === 1 ? 0 : Math.round((k * (frames - 1)) / (stills - 1)), k + 1);
   }

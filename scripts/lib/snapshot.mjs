@@ -9,6 +9,7 @@ export async function collect() {
   const PRICE = /[€$£¥₹]\s?\d|\d[.,]\d{2}\s?[€$£]/;
   const vw = innerWidth, vh = innerHeight;
 
+  const alpha = (c) => (c ? rgba(c).a : 0);
   const isChrome = (el) => Boolean(el.closest(CHROME));
   const visible = (el) => {
     const r = el.getBoundingClientRect();
@@ -20,27 +21,42 @@ export async function collect() {
     }
     return true;
   };
-  const alpha = (c) => {
-    const m = c.match(/rgba?\(([^)]*)\)/);
-    if (!m) return c === "transparent" ? 0 : 1;
-    const parts = m[1].split(/[\s,/]+/).filter(Boolean);
-    return parts.length > 3 ? parseFloat(parts[3]) : 1;
+  // Any CSS colour (oklch, color-mix, named…) → "rgba(r, g, b, a)" in sRGB, via a 1px canvas.
+  const ctx = Object.assign(document.createElement("canvas"), { width: 1, height: 1 }).getContext("2d", { willReadFrequently: true });
+  const normCache = new Map();
+  const norm = (css) => {
+    if (!css) return css;
+    if (normCache.has(css)) return normCache.get(css);
+    ctx.clearRect(0, 0, 1, 1);
+    ctx.fillStyle = "rgba(0, 0, 0, 0)";
+    ctx.fillStyle = css;
+    ctx.fillRect(0, 0, 1, 1);
+    const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data;
+    const out = `rgba(${r}, ${g}, ${b}, ${+(a / 255).toFixed(3)})`;
+    normCache.set(css, out);
+    return out;
   };
   const rgba = (c) => {
-    const m = c.match(/rgba?\(([^)]*)\)/);
-    if (!m) return null;
+    const m = norm(c).match(/rgba?\(([^)]*)\)/);
     const p = m[1].split(/[\s,/]+/).filter(Boolean).map(Number);
     return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 };
   };
-  // The colour actually behind `el`: translucent backgrounds are blended onto their ancestors'.
-  // null when an image or gradient is in the way (contrast unknown).
-  const effectiveBg = (el) => {
+  // What is actually painted behind the text's centre: the element's own background, then whatever
+  // lies beneath it at that point (siblings included), blended. null when an image, SVG or gradient
+  // is in the way (contrast unknown, so not judged).
+  const backdrop = (el, r) => {
+    const x = Math.min(Math.max(r.left + r.width / 2, 0), vw - 1);
+    const y = Math.min(Math.max(r.top + r.height / 2, 0), vh - 1);
+    const stack = document.elementsFromPoint(x, y);
+    const i = stack.indexOf(el);
+    const below = i === -1 ? stack.filter((e) => e !== el && !el.contains(e) && !e.contains(el)).concat(stack.filter((e) => e.contains(el) && e !== el)) : stack.slice(i + 1);
     const layers = [];
-    for (let e = el; e; e = e.parentElement) {
+    for (const e of [el, ...below]) {
+      if (e !== el && (e instanceof SVGElement || /^(img|canvas|video)$/.test(e.localName))) return null;
       const cs = getComputedStyle(e);
       if (cs.backgroundImage && cs.backgroundImage !== "none") return null;
       const c = rgba(cs.backgroundColor);
-      if (c && c.a > 0) {
+      if (c.a > 0) {
         layers.push(c);
         if (c.a >= 1) break;
       }
@@ -57,6 +73,28 @@ export async function collect() {
   const used = new Set(all.map((el) => getComputedStyle(el).fontFamily.split(",")[0].trim().replace(/^["']|["']$/g, "")));
   await Promise.all([...document.fonts].filter((f) => used.has(f.family.replace(/^["']|["']$/g, ""))).map((f) => f.load().catch(() => {})));
   await document.fonts.ready;
+  const strip = (f) => f.trim().replace(/^["']|["']$/g, "");
+  const GENERIC = /^(serif|sans-serif|monospace|cursive|fantasy|math|emoji|system-ui|ui-(serif|sans-serif|monospace|rounded)|-apple-system|blinkmacsystemfont)$/i;
+  const available = (family) => {
+    const faces = [...document.fonts].filter((f) => strip(f.family) === family);
+    if (faces.some((f) => f.status === "loaded" || f.status === "error")) return true; // errors are reported as font-load-failed
+    const probe = "mmmmmmmmmmlli1WQ@#";
+    return ["monospace", "serif"].some((fb) => {
+      ctx.font = `72px ${fb}`;
+      const base = ctx.measureText(probe).width;
+      ctx.font = `72px "${family}", ${fb}`;
+      return ctx.measureText(probe).width !== base;
+    });
+  };
+  const missingFonts = [];
+  const seenFamilies = new Set();
+  for (const el of all) {
+    if (isChrome(el) || !directText(el)) continue;
+    const family = strip(getComputedStyle(el).fontFamily.split(",")[0]);
+    if (!family || GENERIC.test(family) || seenFamilies.has(family)) continue;
+    seenFamilies.add(family);
+    if (!available(family)) missingFonts.push({ family, sample: directText(el).slice(0, 30) });
+  }
   const failedFonts = [...new Set([...document.fonts].filter((f) => f.status === "error").map((f) => f.family.replace(/^["']|["']$/g, "")))];
 
   // External <use href="file.svg#id">: a sprite that isn't valid XML (e.g. "--" inside a comment)
@@ -75,7 +113,7 @@ export async function collect() {
   const load = (url) => new Promise((resolve) => {
     const x = new XMLHttpRequest();
     x.open("GET", url);
-    x.onload = () => resolve(x.responseText);
+    x.onload = () => resolve(x.status === 0 || x.status === 200 ? x.responseText : null);
     x.onerror = () => resolve(null);
     x.send();
   });
@@ -90,6 +128,11 @@ export async function collect() {
     }
     for (const id of ids) if (!doc.getElementById(id)) brokenIllustrations.push({ href: `${name}#${id}`, reason: "no element with that id" });
   }
+
+  // A missing file:// stylesheet still gets an (empty) .sheet in Chromium, so fetch each one.
+  const missingStylesheets = [];
+  for (const l of document.querySelectorAll('link[rel~="stylesheet"]'))
+    if ((await load(l.href)) === null) missingStylesheets.push(l.getAttribute("href"));
 
   const texts = [], targets = [], gradients = [], media = [], cardGroups = [], priceTexts = [];
   const colorMap = new Map();
@@ -110,8 +153,8 @@ export async function collect() {
     const interactive = Boolean(el.closest(TARGETS));
     const inSvg = Boolean(el.closest("svg"));
 
-    if (!inSvg) addColor(cs.backgroundColor, "bg", area, interactive);
-    else if (["path", "circle", "rect", "ellipse", "polygon", "line", "polyline"].includes(el.localName)) addColor(cs.fill, "fill", area, interactive);
+    if (!inSvg) addColor(norm(cs.backgroundColor), "bg", area, interactive);
+    else if (["path", "circle", "rect", "ellipse", "polygon", "line", "polyline"].includes(el.localName) && cs.fill.startsWith("rgb")) addColor(norm(cs.fill), "fill", area, interactive);
     if (cs.backgroundImage.includes("gradient")) gradients.push(cs.backgroundImage);
     if ((el.localName === "svg" && !el.parentElement.closest("svg")) || el.localName === "img") media.push({ width: r.width, height: r.height });
 
@@ -122,14 +165,14 @@ export async function collect() {
         fontSize: parseFloat(cs.fontSize),
         fontWeight: parseInt(cs.fontWeight, 10),
         family: cs.fontFamily,
-        color: cs.color,
-        bg: inSvg ? null : effectiveBg(el),
+        color: norm(cs.color),
+        bg: inSvg ? null : backdrop(el, r),
         align: cs.textAlign === "start" ? "left" : cs.textAlign,
         allowEmoji: Boolean(el.closest("[data-allow-emoji]")),
         inSvg,
       };
       texts.push(t);
-      addColor(cs.color, "text", 0, interactive);
+      addColor(norm(cs.color), "text", 0, interactive);
       if (!inSvg) {
         // Measure the glyphs, not the box: nowrap text can spill out of a box that fits.
         const range = document.createRange();
@@ -179,6 +222,6 @@ export async function collect() {
     viewport: { width: vw, height: vh },
     // Width spanned by text and controls (illustrations may bleed off the edge on purpose).
     scrollWidth: Math.ceil(maxRight - minLeft),
-    failedFonts, brokenIllustrations, texts, targets, colors: [...colorMap.values()], gradients, media, cardGroups, paywall, priceTexts,
+    failedFonts, missingFonts, missingStylesheets, brokenIllustrations, texts, targets, colors: [...colorMap.values()], gradients, media, cardGroups, paywall, priceTexts,
   };
 }

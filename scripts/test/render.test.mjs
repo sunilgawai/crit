@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, symlinkSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, symlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -32,7 +32,12 @@ test("external <use> into illustrations.svg actually paints", () => {
 });
 
 test("no matching inputs exits 2", () => {
-  const r = render(fixtureProject(), "design/directions-none");
+  const cwd = fixtureProject();
+  let r = render(cwd, "design/directions-none");
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /not found: design\/directions-none/);
+  mkdirSync(join(cwd, "design/directions"), { recursive: true });
+  r = render(cwd, "design/directions");
   assert.equal(r.status, 2);
   assert.match(r.stderr, /no \.html files/);
 });

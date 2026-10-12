@@ -141,7 +141,6 @@ node "$SKILL/scripts/scan.mjs" design/screens/ios
 node "$SKILL/scripts/sheet.mjs" design/renders/screens/ios/*.png --out design/renders/ios-core-sheet.png
 ```
 
-0. **Snapshot.** Before changing anything in round n ≥ 2, copy the batch's HTML: `mkdir -p design/critique/<batch>-round-<n-1>-files && cp -R design/screens/<platform>/. design/critique/<batch>-round-<n-1>-files/` (for `directions`, copy `design/directions`). This is how you restore the best round later.
 1. **Scan.** Fix every ✗ (error). For each ! (warning), fix it or write one line in the critique file saying why it's intended. Rescan until there are no errors.
 2. **Critique.** Dispatch a fresh subagent (Agent tool, `subagent_type: general-purpose`) with this prompt, filled in:
    ```
@@ -157,8 +156,9 @@ node "$SKILL/scripts/sheet.mjs" design/renders/screens/ios/*.png --out design/re
    ```
    **Never** include your reasoning, your opinion of the screens or earlier scores. A new subagent every round.
 3. **Record** the critic's reply verbatim in `design/critique/<batch>-round-<n>.md`.
+   **Snapshot** the files exactly as the critic scored them, before touching anything: `mkdir -p design/critique/<batch>-round-<n>-files && cp -R design/screens/<platform>/. design/critique/<batch>-round-<n>-files/` (for `directions`, copy `design/directions`). This is what you restore the best round from.
    Check the reply's `## Screens opened` lists every screen in the batch. If it doesn't, dispatch a fresh critic on the **same** renders. That re-run doesn't count as a round.
-4. **PASS** → the batch is done. You may still apply its one change if it's small; then re-render and rescan, but don't run another critic round. **FAIL** → apply **the one change** first (and the "Also" notes when they're cheap and consistent with the concept), add it to the "changes applied" list, then go back to step 0.
+4. **PASS** → the batch is done. You may still apply its one change if it's small; then re-render and rescan, but don't run another critic round. **FAIL** → apply **the one change** first (and the "Also" notes when they're cheap and consistent with the concept), add it to the "changes applied" list, then go back to step 1.
 5. **At most 4 rounds.** If round 4 still fails, keep the best-scoring round's files (restore them from `design/critique/<batch>-round-<n>-files/`) and carry its open complaints into `handoff.md`.
 
 ## Red flags

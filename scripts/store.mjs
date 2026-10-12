@@ -13,6 +13,9 @@ const design = requireDesignDir();
 const cfgPath = join(design, "store", "store.json");
 if (!existsSync(cfgPath)) fail("missing design/store/store.json — run init.mjs");
 const cfg = JSON.parse(readFileSync(cfgPath, "utf8"));
+const KEYS = ["background", "ink", "headlineFont", "headlineWeight", "ios", "android", "icon", "iconForeground", "iconBackground", "featureGraphic"];
+const unknown = Object.keys(cfg).filter((k) => !KEYS.includes(k));
+if (unknown.length) fail(`store.json has unknown key(s): ${unknown.join(", ")} — allowed: ${KEYS.join(", ")} (see references/store-assets.md)`);
 const need = (p) => {
   const abs = join(design, p);
   if (!existsSync(abs)) fail(`store.json references design/${p}, which does not exist`);
@@ -86,4 +89,5 @@ try {
   await browser.close();
   rmSync(tmp, { force: true });
 }
+if (!written.length) fail("store.mjs built nothing: add screenshots to \"ios\"/\"android\" and an \"icon\" in design/store/store.json");
 for (const f of written) console.log(relative(process.cwd(), f));

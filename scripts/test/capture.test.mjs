@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { join } from "node:path";
-import { readdirSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { SKILL_DIR } from "../lib/paths.mjs";
 import { probe } from "../lib/capture.mjs";
@@ -42,4 +42,19 @@ test("--stills writes evenly spaced frames for review", { timeout: 60_000 }, () 
   assert.equal(r.status, 0, r.stderr);
   const dir = join(cwd, "design/motion/out/pulse-stills");
   assert.deepEqual(readdirSync(dir).sort(), ["1.png", "2.png", "3.png"]);
+});
+
+test("missing scene exits 2 with a message, not a stack trace", () => {
+  const r = capture(fixtureProject(), "design/motion/nope.html");
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /not found/);
+  assert.doesNotMatch(r.stderr, /at .*\.mjs:\d+/);
+});
+
+test("stills from an earlier capture never survive a recapture", { timeout: 60_000 }, () => {
+  const cwd = fixtureProject();
+  capture(cwd, "design/motion/pulse.html", "--stills", "3");
+  assert.equal(capture(cwd, "design/motion/pulse.html").status, 0);
+  assert.ok(!existsSync(join(cwd, "design/motion/out/pulse-stills")));
+  assert.equal(capture(cwd, "design/motion/pulse.html", "--stills", "lots").status, 2);
 });
