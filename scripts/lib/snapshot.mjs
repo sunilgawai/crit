@@ -26,13 +26,28 @@ export async function collect() {
     const parts = m[1].split(/[\s,/]+/).filter(Boolean);
     return parts.length > 3 ? parseFloat(parts[3]) : 1;
   };
+  const rgba = (c) => {
+    const m = c.match(/rgba?\(([^)]*)\)/);
+    if (!m) return null;
+    const p = m[1].split(/[\s,/]+/).filter(Boolean).map(Number);
+    return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 };
+  };
+  // The colour actually behind `el`: translucent backgrounds are blended onto their ancestors'.
+  // null when an image or gradient is in the way (contrast unknown).
   const effectiveBg = (el) => {
+    const layers = [];
     for (let e = el; e; e = e.parentElement) {
       const cs = getComputedStyle(e);
       if (cs.backgroundImage && cs.backgroundImage !== "none") return null;
-      if (alpha(cs.backgroundColor) > 0) return cs.backgroundColor;
+      const c = rgba(cs.backgroundColor);
+      if (c && c.a > 0) {
+        layers.push(c);
+        if (c.a >= 1) break;
+      }
     }
-    return "rgb(255, 255, 255)";
+    let out = { r: 255, g: 255, b: 255 };
+    for (const c of layers.reverse()) out = { r: c.r * c.a + out.r * (1 - c.a), g: c.g * c.a + out.g * (1 - c.a), b: c.b * c.a + out.b * (1 - c.a) };
+    return `rgb(${Math.round(out.r)}, ${Math.round(out.g)}, ${Math.round(out.b)})`;
   };
   const directText = (el) =>
     [...el.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join(" ").replace(/\s+/g, " ").trim();

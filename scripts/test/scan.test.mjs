@@ -63,3 +63,13 @@ test("an illustration bleeding off the edge is not overflow, but text is", () =>
     <p style="white-space:nowrap;margin:120px 20px;font-size:17px">This sentence is far too long to fit on one line of a phone screen.</p></body></html>`);
   assert.ok(scan(cwd, f).findings.some((x) => x.rule === "overflow-x"));
 });
+
+test("translucent backgrounds are composited before checking contrast", () => {
+  const cwd = fixtureProject();
+  const f = join(cwd, "design/screens/ios/06-tint.html");
+  writeFileSync(f, `<!doctype html><html><head><link rel="stylesheet" href="../../device.css"></head>
+    <body data-platform="ios" data-screen-kind="main" style="background:#F3EEE4;color:#201D19">
+    <div style="margin:120px 20px;padding:12px;border-radius:17px;background:rgba(32,29,25,.06);font:600 15px system-ui">Suggest</div></body></html>`);
+  const r = scan(cwd, f);
+  assert.ok(!r.findings.some((x) => x.rule === "contrast"), JSON.stringify(r.findings));
+});
