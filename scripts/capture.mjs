@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-// Usage: node capture.mjs <scene.html> [--out file.mp4]
+// Usage: node capture.mjs <scene.html> [--out file.mp4] [--stills N]
+// --stills N also saves N evenly spaced frames to out/<scene>-stills/1.png… for review.
 // Deterministic frame-by-frame capture of a motion scene (see references/motion.md) to MP4.
-import { mkdirSync } from "node:fs";
+import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, relative, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { fail } from "./lib/paths.mjs";
@@ -11,6 +12,8 @@ import { encoder, seek } from "./lib/capture.mjs";
 const args = process.argv.slice(2);
 const o = args.indexOf("--out");
 const outArg = o === -1 ? null : args.splice(o, 2)[1];
+const si = args.indexOf("--stills");
+const stills = si === -1 ? 0 : Number(args.splice(si, 2)[1]);
 const scene = args[0];
 if (!scene) fail("usage: capture.mjs <scene.html> [--out file.mp4]");
 const file = resolve(scene);
@@ -34,9 +37,18 @@ try {
   mkdirSync(dirname(out), { recursive: true });
   const enc = encoder(out, fps);
   const frames = Math.round((duration / 1000) * fps);
+  const stillDir = out.replace(/\.mp4$/, "-stills");
+  const stillAt = new Map();
+  if (stills > 0) {
+    rmSync(stillDir, { recursive: true, force: true });
+    mkdirSync(stillDir, { recursive: true });
+    for (let k = 0; k < stills; k++) stillAt.set(stills === 1 ? 0 : Math.round((k * (frames - 1)) / (stills - 1)), k + 1);
+  }
   for (let i = 0; i < frames; i++) {
     await seek(page, (i * 1000) / fps);
-    await enc.write(await page.screenshot({ type: "png", animations: "allow" }));
+    const png = await page.screenshot({ type: "png", animations: "allow" });
+    if (stillAt.has(i)) writeFileSync(join(stillDir, `${stillAt.get(i)}.png`), png);
+    await enc.write(png);
     if (i % fps === 0) process.stderr.write(`\r${Math.round((i / frames) * 100)}%`);
   }
   await enc.end();

@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { join } from "node:path";
-import { writeFileSync } from "node:fs";
+import { readdirSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { SKILL_DIR } from "../lib/paths.mjs";
 import { probe } from "../lib/capture.mjs";
@@ -34,4 +34,12 @@ test("a page without SCENE fails clearly", () => {
   const r = capture(cwd, f);
   assert.equal(r.status, 2);
   assert.match(r.stderr, /window\.SCENE/);
+});
+
+test("--stills writes evenly spaced frames for review", { timeout: 60_000 }, () => {
+  const cwd = fixtureProject();
+  const r = capture(cwd, "design/motion/pulse.html", "--stills", "3");
+  assert.equal(r.status, 0, r.stderr);
+  const dir = join(cwd, "design/motion/out/pulse-stills");
+  assert.deepEqual(readdirSync(dir).sort(), ["1.png", "2.png", "3.png"]);
 });
