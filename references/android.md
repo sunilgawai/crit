@@ -25,9 +25,13 @@ Read this before Phase 5. The goal: an Android version an Android user would bel
 
 Body is 16px (Body L) for reading and 14px for dense UI.
 
+## Shared CSS and specificity
+
+Platform overrides in shared CSS (`body[data-platform="android"] .card`) outrank a screen's own `.card` rule and silently win. Put platform differences in the screen file, or write the screen rule with the same specificity. After any shared-CSS change, re-render **both** platforms and check that nothing slid under the top app bar.
+
 ## Components (Material 3, Expressive era)
 
-- **Navigation bar** (replaces the tab bar): 80dp tall plus `--safe-bottom`, 3–5 destinations, icon 24dp over a 12px label. The active item sits in a **pill indicator 64×32dp** filled with a tint of the signal colour (signal at ~20% on the world ground) and has a filled icon. The flexible, shorter 64dp bar is fine for 3 items.
+- **Navigation bar** (replaces the tab bar; mark it up as `<nav>` so the scanner treats it as a bar): 80dp tall plus `--safe-bottom`, 3–5 destinations, icon 24dp over a 12px label. The active item sits in a **pill indicator 64×32dp** filled with a tint of the signal colour (signal at ~20% on the world ground) and has a filled icon. The flexible, shorter 64dp bar is fine for 3 items.
 - **Top app bar:** small (64dp, title 22px left-aligned beside the nav icon), medium (112dp) or large (152dp, title at Headline/Display size, bottom-left). The large bar is where the hero headline lives on Android.
 - **FAB:** 56dp with 16dp corners (or 96dp large for a single dominant action), bottom-right, 16dp from the edges, above the navigation bar. Extended FAB: 56dp tall with icon and label. Use it when the screen has one obvious "make a new thing" action. iOS puts that action in the content or nav bar; Android puts it in the FAB.
 - **Cards:** elevated (tonal surface + small shadow), filled (world-2) or outlined (1dp rule). Corners 12–28dp. Expressive M3 encourages *varied* shapes, so one hero card can be more rounded or cut than the rest.
@@ -35,7 +39,7 @@ Body is 16px (Body L) for reading and 14px for dense UI.
 - **Chips:** 32dp tall, 8dp corners, for filters and suggestions.
 - **Bottom sheets:** 28dp top corners, 32×4dp drag handle.
 - **Switches:** 52×32 track, thumb grows when on.
-- **Segmented buttons:** outlined, 40dp, checkmark on the selected segment.
+- **Segmented buttons:** outlined, 40dp, checkmark on the selected segment. Mark up as `role="tablist"` with `role="tab"` segments.
 - **Snackbar** for confirmations, instead of iOS-style toasts.
 
 Touch targets are at least **48×48dp** (the scanner fails smaller).

@@ -62,7 +62,7 @@ node "$SKILL/scripts/init.mjs"     # creates design/ (never overwrites)
 3. Write `design/directions/directions.md`, with one section per direction: anchor; palette (hex for world, world-2, surface, ink, ink-2, signal, illustration); fonts; archetype; illustration style; motion idea; the one sentence a stranger would say.
 4. Install every font they need: `node "$SKILL/scripts/fonts.mjs" fraunces bricolage-grotesque …`.
 5. Build each direction's **main screen**, fully realised (real copy, real illustration, tab bar), at `design/directions/<a|b|c>/main.html` (iOS). Each file carries its own tokens in a `<style>` block and links `../../fonts/fonts.css`, `../../device.css` and `../../device.js`.
-6. Run the steps below, then dispatch the critic with batch `directions`:
+6. Run the steps below, then dispatch the critic with batch `directions` (for its `Concept` input, pass `directions.md`: there's no `concept.md` yet):
    ```bash
    node "$SKILL/scripts/render.mjs" design/directions
    node "$SKILL/scripts/scan.mjs" design/directions          # fix every ✗ before going on
@@ -93,11 +93,15 @@ Read `ios.md`, `copy.md` and (if monetised) `paywalls.md`. Build every screen in
 
 ### 5. Android screens
 
-Read `android.md`. Re-design each iOS screen natively in `design/screens/android/` (same numbering). Install `roboto-flex`. Quality loop with batch `android-core`. Also give the critic a pair sheet (iOS and Android of the same three screens, alternating) and ask it to judge "same world, native platform".
+Read `android.md`. Re-design each iOS screen natively in `design/screens/android/` (same numbering). Install `roboto-flex`. Quality loop with batch `android-core`, and in every round also make a pair sheet and pass it as the critic's `Pair sheet` input:
+```bash
+node "$SKILL/scripts/sheet.mjs" design/renders/screens/ios/03-*.png design/renders/screens/android/03-*.png design/renders/screens/ios/05-*.png design/renders/screens/android/05-*.png --out design/renders/pair-sheet.png
+```
+(Use the three most important screens; any numbers.)
 
 ### 6. Copy pass
 
-Follow "Phase 6" in `copy.md` across both platforms. Re-render and rescan everything; the scan must be clean (no ✗).
+Run `node "$SKILL/scripts/scan.mjs" design/screens --copy` to list every screen's visible text. Follow "Phase 6" in `copy.md` across both platforms, and log each changed line (before → after, which screens) in `design/critique/copy-pass.md`. Re-render and rescan everything; the scan must be clean (no ✗).
 
 ### 7. Motion
 
@@ -137,6 +141,7 @@ node "$SKILL/scripts/scan.mjs" design/screens/ios
 node "$SKILL/scripts/sheet.mjs" design/renders/screens/ios/*.png --out design/renders/ios-core-sheet.png
 ```
 
+0. **Snapshot.** Before changing anything in round n ≥ 2, copy the batch's HTML: `mkdir -p design/critique/<batch>-round-<n-1>-files && cp -R design/screens/<platform>/. design/critique/<batch>-round-<n-1>-files/` (for `directions`, copy `design/directions`). This is how you restore the best round later.
 1. **Scan.** Fix every ✗ (error). For each ! (warning), fix it or write one line in the critique file saying why it's intended. Rescan until there are no errors.
 2. **Critique.** Dispatch a fresh subagent (Agent tool, `subagent_type: general-purpose`) with this prompt, filled in:
    ```
@@ -147,18 +152,21 @@ node "$SKILL/scripts/sheet.mjs" design/renders/screens/ios/*.png --out design/re
    - Platform: <ios|android> · Batch: <batch> · Round <n>
    - Contact sheet: <absolute path>
    - Screens: <absolute paths of every PNG in the batch>
-   - Last round's one change: <text, or "none">
+   - Changes applied in earlier rounds (keep them unless they now fail): <numbered list of every "one change" applied so far, or "none">
+   - Pair sheet: <absolute path, Android batches only>
    ```
    **Never** include your reasoning, your opinion of the screens or earlier scores. A new subagent every round.
 3. **Record** the critic's reply verbatim in `design/critique/<batch>-round-<n>.md`.
-4. **PASS** → the batch is done. **FAIL** → apply **the one change** first (and the "Also" notes when they're cheap and consistent with the concept), then go back to step 1.
+   Check the reply's `## Screens opened` lists every screen in the batch. If it doesn't, dispatch a fresh critic on the **same** renders. That re-run doesn't count as a round.
+4. **PASS** → the batch is done. You may still apply its one change if it's small; then re-render and rescan, but don't run another critic round. **FAIL** → apply **the one change** first (and the "Also" notes when they're cheap and consistent with the concept), add it to the "changes applied" list, then go back to step 0.
 5. **At most 4 rounds.** If round 4 still fails, keep the best-scoring round's files (restore them from git or your copies) and carry its open complaints into `handoff.md`.
 
 ## Red flags
 
 | Thought | Reality |
 |---|---|
-| "The critic passed round 1, great" | Be suspicious. Check its reply cites every screen; if not, rerun it. |
+| "The critic passed round 1, great" | Be suspicious. Check its `Screens opened` lists every screen; if not, rerun it on the same renders. |
+| "This critic wants to undo what the last one asked for" | It shouldn't: the changes-applied list tells it what to keep. If it insists, keep the earlier change unless the new reply explains why it now fails. |
 | "This warning doesn't matter" | Fix it, or write why it's intended in the critique file. |
 | "I'll show the user before scanning, to save time" | Never show unscanned, uncritiqued work, except the three directions after their scan. |
 | "Android is basically the same" | Re-read `android.md`. A ported iOS screen fails the whole point of Phase 5. |
@@ -166,4 +174,4 @@ node "$SKILL/scripts/sheet.mjs" design/renders/screens/ios/*.png --out design/re
 | "An abstract gradient blob will do for illustration" | That's the AI default. Draw the anchor. |
 | "Clean and minimal is a safe concept" | It's the tidy-but-forgettable cap. Pick an anchor. |
 | "The emoji is just a placeholder" | Placeholders ship. Draw it now. |
-| "I'll describe the critic's feedback to it next round" | Give it only "last round's one change". It must judge the pixels fresh. |
+| "I'll describe the critic's feedback to it next round" | Give it only the list of changes applied. It must judge the pixels fresh. |

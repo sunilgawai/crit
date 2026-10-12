@@ -18,15 +18,15 @@ On `<body data-screen-kind="paywall">`, mark these elements:
 
 | Attribute | Element | Rule |
 |---|---|---|
-| `data-paywall="price"` | the amount that will be billed, e.g. "€24.99 a year" | must be the **largest price** on screen |
+| `data-paywall="price"` | the amount that will be billed, e.g. "€39.99 a year" | must be the **largest price** on screen |
 | `data-paywall="trial"` | the trial line, e.g. "Free for 7 days" | if present, `after-trial` is required |
-| `data-paywall="after-trial"` | "Then €24.99 a year" | visible whenever a trial is shown |
+| `data-paywall="after-trial"` | "Then €39.99 a year" | visible whenever a trial is shown |
 | `data-paywall="restore"` | Restore purchases | required, visible, 44pt (iOS) / 48dp (Android) |
 | `data-paywall="terms"` | Terms of Use (EULA) link | required, visible |
 | `data-paywall="privacy"` | Privacy Policy link | required, visible |
 | `data-paywall="close"` | close / "Not now" | required, visible from the first frame, not faded or delayed |
 
-Per-week or per-month breakdowns ("That's €0.48 a week") are allowed but must be **smaller** than the billed price.
+Per-week or per-month breakdowns ("That's €0.77 a week") are allowed but must be **smaller** than the billed price.
 
 ## Apple (App Review Guidelines 3.1.1, 3.1.2)
 
@@ -49,14 +49,14 @@ Per-week or per-month breakdowns ("That's €0.48 a week") are allowed but must 
 ## Three paywall layouts that convert without tricks
 
 **1. Trial timeline** (best with a free trial)
-- A vertical 3-step timeline: *Today: full access* → *Day 5: we'll remind you* → *Day 7: €24.99 a year starts*.
+- A vertical 3-step timeline: *Today: full access* → *Day 5: we'll remind you* → *Day 7: €39.99 a year starts*.
 - Honesty about the reminder raises trial starts.
 - The billed price sits on the last step and is repeated large above the CTA.
 - CTA: "Start my free week".
 
 **2. Plan comparison** (best with 2 plans)
 - Annual and monthly as two selectable cards. Annual is pre-selected, with an honest "save 48%" badge.
-- The billed amount is the big number on each card ("€24.99 a year"); "€2.08/mo" is small underneath.
+- The billed amount is the big number on each card ("€39.99 a year"); "€3.33/mo" is small underneath.
 - The concept's illustration sits above; one sentence states the outcome.
 
 **3. Single-plan story** (best for a simple product)

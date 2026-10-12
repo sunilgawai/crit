@@ -50,7 +50,7 @@ Where the reference set itself falls short (so you must do better):
 A good anchor is a **real object, place, ritual or material connected to the app's job**. It must suggest three things at once: a **palette**, an **illustration subject** and a **motion**. If it doesn't suggest all three, it's not specific enough.
 
 How to find one:
-1. Write the app's job as a verb phrase ("save towards a thing", "focus for 40 minutes", "split the rent").
+1. Write the app's job as a verb phrase ("save towards a thing", "focus for 40 minutes", "learn ten words a day").
 2. List 10 physical things, places or rituals people associate with that job, including odd ones (a piggy bank, a jar of coins, a pot on a shelf, marbles, a seed packet, a harbour ledger).
 3. Discard the clichés everyone uses (piggy bank, rocket, lightbulb, trophy, brain).
 4. Pick the one with the best palette + illustration + motion.
@@ -61,8 +61,8 @@ Worked examples:
 |---|---|---|---|---|
 | Savings goals | Glossy marbles in a jar | warm paper, tomato, teal, cobalt marbles | 3D-ish spheres, one per goal | marbles drop and settle |
 | Focus timer | An allotment at dawn, with a mole gardener | sky blue → soil brown, sunflower yellow | thick-outline flat garden, mole in a straw hat | sunflowers sway, the mole waters |
-| Bill splitting | A shared fridge door with magnets and notes | enamel white, magnet primaries | cut-paper notes, letter magnets | notes slide under magnets |
-| Book club | Margins of a library book, pencil notes | cream paper, pencil grey, one ink colour | line-art marginalia, underlines | underline draws itself |
+| Recipe keeper | A grandmother's recipe tin of index cards | tin red, card cream, pencil grey | line-art cards with food sketches, a tin lid | cards flip up out of the tin |
+| Podcast player | A late-night radio booth | studio black-brown, on-air red, warm lamp amber | a desk mic, VU needles, a lit sign | needles bounce, the ON AIR sign glows |
 | Travel planner | A harbour departure board + postcards | sea blue, sand, stamp red | postcard scenes, stamps | the board flips |
 | Delivery tracking | A seed packet travelling by post | peach, kraft brown, leaf green | mascot with packet, flowers | packet hops along a route |
 | Sleep | A village going to sleep, window by window | dusk indigo (not purple-blue gradient!), lamp amber | windows lighting off | lights fade one by one |

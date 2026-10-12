@@ -35,11 +35,11 @@ The display voice (wordmarks, hero numerals, editorial sentences) comes from the
 
 - **Navigation bar:** 44pt tall. Large-title screens put a 34px bold title on its own 52pt row under it, left-aligned with the content margin. Back is a chevron plus the previous title (or just the chevron).
 - **Margins:** 16 or 20px side margins, consistent per app. Cards inset by the same margin.
-- **Tab bar:** 4–5 items. Either the classic bar (49pt plus `--safe-bottom`, hairline top border, translucent world colour) or the current floating style (iOS 26 "Liquid Glass": a rounded capsule inset ~16px from the sides and bottom, translucent with a backdrop blur, the active item filled). Icon 24–28px above a 10–11px label. The active item uses the **signal** colour or a filled icon. Inactive items are ink-3.
+- **Tab bar:** mark it up as `<nav>` (the scanner then doesn't treat its items as identical cards). 4–5 items. Either the classic bar (49pt plus `--safe-bottom`, hairline top border, translucent world colour) or the current floating style (iOS 26 "Liquid Glass": a rounded capsule inset ~16px from the sides and bottom, translucent with a backdrop blur, the active item filled). Icon 24–28px above a 10–11px label. The active item uses the **signal** colour or a filled icon. Inactive items are ink-3.
 - **Lists:** grouped or plain. Rows 44–60pt, 16px insets, separators inset to the text start, chevron (`›` drawn as a 7×12 SVG stroke, ink-3) only when the row navigates.
 - **Sheets:** rounded top corners (≥ 28px), a 36×5 grabber 6px from the top, content below.
 - **Buttons:** primary is a filled capsule or a 14–16px radius rect at 50–56px tall, full width or hugging its label. Secondary is tinted or plain text. One primary per screen.
-- **Segmented control:** for 2–4 peer views of one thing. Rounded track, sliding selected pill.
+- **Segmented control:** for 2–4 peer views of one thing. Rounded track, sliding selected pill, 32pt tall. Mark it up as `role="tablist"` with `role="tab"` segments; the scanner then accepts segments ≥ 28pt tall.
 - **Switches:** 51×31, on-state in the signal colour (or green if the signal colour would be confusing).
 
 ## Icons

@@ -8,16 +8,16 @@ Read each line aloud as the app's maker, to one friend who uses the app. If you 
 
 ## Rules
 
-1. **Say the specific thing.** Name the bill, the person, the book, the time. "Rent's covered" beats "Payment successful".
+1. **Say the specific thing.** Name the plant, the person, the place, the time. "Fern watered" beats "Task completed".
 2. **Numbers over adjectives.** "Arriving by 3pm", "12 more than last week", "€212 left for May". Never "amazing progress".
 3. **Sentence case everywhere.** Headlines end with a full stop when they're sentences. Title Case reads as a template (the scanner warns).
 4. **One idea per line.** Headlines ≤ 8 words; supporting lines ≤ 14. If a line needs "and", it's probably two lines, or one too many.
 5. **One turn of phrase per screen, at most.** A headline may play ("Making payments to a brighter you."); everything else is plain. Two jokes on one screen is a greeting card.
-6. **Buttons are verbs naming the outcome:** "Settle up", "Start my free week", "Track my order". 1–3 words. Never "Submit", "Continue" when something better exists, or "Click here".
-7. **Empty states say what to do next**, in the app's voice: "Nothing owed. Enjoy it." + "Add a bill". No "Oops", no "Uh-oh", no sad-face illustrations by default.
+6. **Buttons are verbs naming the outcome:** "Water them all", "Start my free week", "Track my order". 1–3 words. Never "Submit", "Continue" when something better exists, or "Click here".
+7. **Empty states say what to do next**, in the app's voice: "No plants thirsty today." + "Add a plant". No "Oops", no "Uh-oh", no sad-face illustrations by default.
 8. **Errors say what happened and what to do**, without blame: "Couldn't reach your bank. Try again in a minute."
 9. **Exclamation marks:** at most one per screen, and only where a person would actually raise their voice (the scanner warns above one).
-10. **Real content only.** Real-sounding names (varied: Priya, Tomás, Ade, Mei), real amounts with the right currency, real dates and places. No lorem ipsum, John Doe or Acme (the scanner fails them).
+10. **Real content only.** Real-sounding names (varied across cultures: Aiko, Kwame, Lucía, Rohan, Ingrid), real amounts with the right currency, real dates and places. No lorem ipsum, John Doe or Acme (the scanner fails them).
 11. **No AI cadence:** no "Whether you're X or Y", no rule-of-three adjective lists, no "it's not just X, it's Y", no em-dash flourishes in UI, no rhetorical questions in headlines.
 
 ## Banned (scanner: error)
@@ -30,21 +30,21 @@ Also avoid (not scanned, but the critic notices): *smart*, *intuitive*, *powerfu
 
 | Before | After |
 |---|---|
-| Unlock your financial potential | Rent's covered. €212 left for May. |
-| Track your expenses seamlessly | Who owes what, settled every Sunday. |
-| Welcome back, User! | Morning, Priya. |
-| Your Daily Reading Journey | Page 112. Mei got here first. |
+| Unlock your financial potential | €212 left for May. Groceries are covered. |
+| Track your workouts seamlessly | Three runs this week. Saturday's was your fastest. |
+| Welcome back, User! | Morning, Aiko. |
+| Your Daily Learning Journey | Day 12. 140 words you didn't know in May. |
 | Start Your Free Trial Today! | Start my free week |
-| Payment Successful! 🎉 | Paid. Tomás will see it now. |
-| No data available | Nothing yet. Your first bill goes here. |
+| Booking Confirmed! 🎉 | Booked. Table for two, Friday at 8. |
+| No data available | Nothing yet. Your first trip goes here. |
 | Elevate your focus with smart sessions | Forty minutes. Phone face down. |
 | Get started | Make my first pot |
 | Something went wrong. Please try again later. | Couldn't save that. Check your signal and try again. |
 
 ## Onboarding and paywall copy
 
-- Onboarding headlines state what the person *gets*, in their words: "Split the rent in one tap." Not what the app *is*: "A smart bill-splitting platform".
-- The paywall headline is the outcome, the price line is plain and exact ("€24.99 a year"), and the trial line says what happens next ("Free for 7 days, then €24.99 a year. Cancel anytime in Settings.").
+- Onboarding headlines state what the person *gets*, in their words: "Know when every plant needs water." Not what the app *is*: "A smart plant-care platform".
+- The paywall headline is the outcome, the price line is plain and exact ("€39.99 a year"), and the trial line says what happens next ("Free for 7 days, then €39.99 a year. Cancel anytime in Settings.").
 - Store screenshot headlines: ≤ 6 words, benefit-first, the same voice as the app.
 
 ## Phase 6: the copy pass
