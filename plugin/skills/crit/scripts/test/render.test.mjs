@@ -73,3 +73,10 @@ test("renders show the settled state, not an entry animation mid-flight", () => 
   const i = (350 * 3 * png.width + 150 * 3) * 4;
   assert.deepEqual([...png.data.slice(i, i + 3)], [0xe8, 0x50, 0x1a]);
 });
+
+test("sheet labels are HTML-escaped", async () => {
+  const { sheetHtml } = await import("../lib/sheet.mjs");
+  const html = sheetHtml({ images: [{ dataUri: "data:,", width: 402, height: 874 }], labels: ["A <b>& co"] });
+  assert.match(html, /A &lt;b&gt;&amp; co/);
+  assert.doesNotMatch(html, /<b>& co/);
+});
