@@ -90,7 +90,7 @@ Design tells (error): Inter, Roboto or Arial in display roles on iOS; Tailwind d
 
 Design tells (warning): more than one saturated signal hue in use; no element with font size at least 3× the body size; three or more sibling cards with identical size and structure; every text block centred.
 
-Copy tells (error): a banned-phrase list (e.g. "unlock your potential", "seamless", "effortlessly", "elevate", "supercharge", "empower", "your journey", "take control", "all-in-one", "revolutionize", "game-changer", "dive in", "in today's fast-paced"). Copy tells (warning): more than one exclamation mark per screen; Title Case headlines; sentences over 20 words.
+Copy tells (error): a banned-phrase list (e.g. "unlock your potential", "seamless", "effortlessly", "elevate", "supercharge", "empower", "your journey", "take control", "all-in-one", "revolutionize", "game-changer", "dive in", "in today's fast-paced"). Copy tells (warning): more than one exclamation mark per screen; Title Case headlines; sentences over 14 words (copy.md).
 
 Paywall rules (error, only on screens marked `data-screen-kind="paywall"`): elements marked `data-paywall="price"`, `"terms"`, `"privacy"`, `"restore"` and `"close"` must exist and be visible; the billed price (`data-paywall="price"`) must be the largest price-like text on screen (Apple 3.1.2(c)); if `data-paywall="trial"` exists, the post-trial price must also be visible.
 

@@ -59,6 +59,38 @@ export async function collect() {
   await document.fonts.ready;
   const failedFonts = [...new Set([...document.fonts].filter((f) => f.status === "error").map((f) => f.family.replace(/^["']|["']$/g, "")))];
 
+  // External <use href="file.svg#id">: a sprite that isn't valid XML (e.g. "--" inside a comment)
+  // or lacks the id draws nothing, silently. Load each sprite and check.
+  const brokenIllustrations = [];
+  const hrefs = [...document.querySelectorAll("use")]
+    .map((u) => u.getAttribute("href") || u.getAttribute("xlink:href"))
+    .filter((h) => h && !h.startsWith("#"));
+  const byFile = new Map();
+  for (const h of hrefs) {
+    const url = new URL(h, location.href);
+    const file = url.href.split("#")[0];
+    if (!byFile.has(file)) byFile.set(file, { ids: new Set(), name: h.split("#")[0] });
+    if (url.hash) byFile.get(file).ids.add(url.hash.slice(1));
+  }
+  const load = (url) => new Promise((resolve) => {
+    const x = new XMLHttpRequest();
+    x.open("GET", url);
+    x.onload = () => resolve(x.responseText);
+    x.onerror = () => resolve(null);
+    x.send();
+  });
+  for (const [file, { ids, name }] of byFile) {
+    const text = await load(file);
+    if (text === null || text === "") { brokenIllustrations.push({ href: name, reason: "file not found" }); continue; }
+    const doc = new DOMParser().parseFromString(text, "image/svg+xml");
+    const err = doc.querySelector("parsererror");
+    if (err) {
+      brokenIllustrations.push({ href: name, reason: `not valid XML (${err.textContent.replace(/\s+/g, " ").trim().slice(0, 120)}) — check for "--" inside <!-- comments -->` });
+      continue;
+    }
+    for (const id of ids) if (!doc.getElementById(id)) brokenIllustrations.push({ href: `${name}#${id}`, reason: "no element with that id" });
+  }
+
   const texts = [], targets = [], gradients = [], media = [], cardGroups = [], priceTexts = [];
   const colorMap = new Map();
   const addColor = (css, role, area, interactive) => {
@@ -147,6 +179,6 @@ export async function collect() {
     viewport: { width: vw, height: vh },
     // Width spanned by text and controls (illustrations may bleed off the edge on purpose).
     scrollWidth: Math.ceil(maxRight - minLeft),
-    failedFonts, texts, targets, colors: [...colorMap.values()], gradients, media, cardGroups, paywall, priceTexts,
+    failedFonts, brokenIllustrations, texts, targets, colors: [...colorMap.values()], gradients, media, cardGroups, paywall, priceTexts,
   };
 }

@@ -4,7 +4,7 @@ export const SHOT = {
   android: { width: 360, height: 640, scale: 3 }, // → 1080×1920 (Google Play phone)
 };
 
-export function shotHtml({ image, headline, bg, ink, font = "Georgia, serif", fontsCss, platform }) {
+export function shotHtml({ image, headline, bg, ink, font = "Georgia, serif", weight = 400, fontsCss, platform }) {
   const ios = platform === "ios";
   const { width: W, height: H } = SHOT[platform];
   const deviceW = Math.round(W * (ios ? 0.8 : 0.72));
@@ -16,7 +16,7 @@ ${fontsCss ? `<link rel="stylesheet" href="${fontsCss}">` : ""}
 <style>
   html,body{margin:0;width:${W}px;height:${H}px;overflow:hidden;background:${bg}}
   h1{position:absolute;left:${Math.round(W * 0.09)}px;right:${Math.round(W * 0.09)}px;top:${Math.round(H * 0.075)}px;margin:0;
-     font-family:${font};font-weight:600;font-size:${ios ? 38 : 30}px;line-height:1.08;letter-spacing:-0.02em;color:${ink};
+     font-family:${font};font-weight:${weight};font-synthesis:none;font-size:${ios ? 46 : 36}px;line-height:1.04;letter-spacing:-0.025em;color:${ink};
      text-wrap:balance;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   .device{position:absolute;left:50%;top:${deviceTop}px;width:${deviceW}px;transform:translateX(-50%);
      border-radius:${radius}px;overflow:hidden;box-shadow:0 0 0 ${ios ? 9 : 7}px #0d0d0f,0 30px 70px -20px rgba(0,0,0,.35)}

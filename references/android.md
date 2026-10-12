@@ -31,7 +31,7 @@ Platform overrides in shared CSS (`body[data-platform="android"] .card`) outrank
 
 ## Components (Material 3, Expressive era)
 
-- **Navigation bar** (replaces the tab bar; mark it up as `<nav>` so the scanner treats it as a bar): 80dp tall plus `--safe-bottom`, 3–5 destinations, icon 24dp over a 12px label. The active item sits in a **pill indicator 64×32dp** filled with a tint of the signal colour (signal at ~20% on the world ground) and has a filled icon. The flexible, shorter 64dp bar is fine for 3 items.
+- **Navigation bar** (replaces the tab bar; mark it up as `<nav>` so the scanner treats it as a bar): 80dp tall plus `--safe-bottom`, 3–5 destinations, icon 24dp over a 12px label. The active item sits in a **pill indicator 64×32dp** filled with a tint of the signal colour (signal at ~20% on the world ground), or with world-2 if the signal carries meaning in the concept (e.g. "yellow = this one's on you") and has a filled icon. The flexible, shorter 64dp bar is fine for 3 items.
 - **Top app bar:** small (64dp, title 22px left-aligned beside the nav icon), medium (112dp) or large (152dp, title at Headline/Display size, bottom-left). The large bar is where the hero headline lives on Android.
 - **FAB:** 56dp with 16dp corners (or 96dp large for a single dominant action), bottom-right, 16dp from the edges, above the navigation bar. Extended FAB: 56dp tall with icon and label. Use it when the screen has one obvious "make a new thing" action. iOS puts that action in the content or nav bar; Android puts it in the FAB.
 - **Cards:** elevated (tonal surface + small shadow), filled (world-2) or outlined (1dp rule). Corners 12–28dp. Expressive M3 encourages *varied* shapes, so one hero card can be more rounded or cut than the rest.

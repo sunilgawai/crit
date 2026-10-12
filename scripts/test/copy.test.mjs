@@ -18,3 +18,7 @@ test("human copy is clean", () => {
   assert.deepEqual(rules("Arriving by 3pm"), []);
 });
 test("placeholder content", () => assert.ok(rules("Lorem ipsum dolor").includes("placeholder-content")));
+test("supporting lines over 14 words are long (copy.md)", () => {
+  assert.ok(rules("One two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen.").includes("long-sentence"));
+  assert.ok(!rules("One two three four five six seven eight nine ten eleven twelve thirteen fourteen.").includes("long-sentence"));
+});

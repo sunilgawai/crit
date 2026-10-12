@@ -95,3 +95,20 @@ test("--copy lists each screen's visible text (no device chrome) for the copy pa
   assert.match(r.stdout, /Add money/);
   assert.doesNotMatch(r.stdout, /9:41/);
 });
+
+test("a sprite that is invalid XML or lacks the symbol is an error, not a blank drawing", () => {
+  const cwd = fixtureProject();
+  const f = join(cwd, "design/screens/ios/08-sprite.html");
+  writeFileSync(f, `<!doctype html><html><head><link rel="stylesheet" href="../../device.css"></head>
+    <body data-platform="ios" data-screen-kind="main" style="background:#F3EEE4;color:#1C1A17">
+    <svg width="120" height="120"><use href="../../illustrations.svg#sun"/></svg>
+    <svg width="120" height="120"><use href="../../illustrations.svg#moon"/></svg></body></html>`);
+  let findings = scan(cwd, f).findings.filter((x) => x.rule === "broken-illustration");
+  assert.equal(findings.length, 1, JSON.stringify(findings));
+  assert.match(findings[0].detail, /#moon/);
+  // "--" inside an XML comment makes the whole sprite unparseable
+  writeFileSync(join(cwd, "design/illustrations.svg"),
+    `<svg xmlns="http://www.w3.org/2000/svg"><!-- set --fill on the use --><symbol id="sun" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5"/></symbol></svg>`);
+  findings = scan(cwd, f).findings.filter((x) => x.rule === "broken-illustration");
+  assert.ok(findings.some((x) => /not valid XML/.test(x.detail)), JSON.stringify(findings));
+});

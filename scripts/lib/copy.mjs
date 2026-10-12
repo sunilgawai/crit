@@ -28,7 +28,7 @@ export function copyFindings(texts) {
     if (fontSize >= 22 && isTitleCase(text)) add("title-case", "warning", `"${text}" — use sentence case`);
     for (const sentence of text.split(/[.!?]+/)) {
       const n = sentence.split(/\s+/).filter(Boolean).length;
-      if (n > 20) add("long-sentence", "warning", `${n} words: "${sentence.trim().slice(0, 60)}…"`);
+      if (n > 14) add("long-sentence", "warning", `${n} words: "${sentence.trim().slice(0, 60)}…"`);
     }
   }
   const bangs = texts.reduce((n, t) => n + (t.text.match(/!/g)?.length ?? 0), 0);

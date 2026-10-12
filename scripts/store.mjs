@@ -48,7 +48,7 @@ try {
     for (const [i, s] of (cfg[platform] ?? []).entries()) {
       const html = shotHtml({
         image: pathToFileURL(need(s.image)).href, headline: s.headline ?? "", bg: cfg.background ?? "#fff",
-        ink: cfg.ink ?? "#111", font: cfg.headlineFont, fontsCss, platform,
+        ink: cfg.ink ?? "#111", font: cfg.headlineFont, weight: cfg.headlineWeight ?? 400, fontsCss, platform,
       });
       await shoot(html, SHOT[platform], join(out, platform, `screenshot-${i + 1}.png`));
     }
@@ -60,7 +60,9 @@ try {
     const buf = await shoot(iconHtml(svg), { width: 1024, height: 1024 }, file);
     // App Store rejects icons with an alpha channel, even a fully opaque one: re-encode as RGB.
     writeFileSync(file, toRgb(buf, cfg.background));
-    await shoot(iconHtml(svg), { width: 512, height: 512 }, join(out, "android", "icon-512.png"), { transparent: true });
+    const play = join(out, "android", "icon-512.png");
+    // Play wants a 32-bit PNG; Chromium drops alpha when every pixel is opaque.
+    writeFileSync(play, PNG.sync.write(PNG.sync.read(await shoot(iconHtml(svg), { width: 512, height: 512 }, play, { transparent: true })), { colorType: 6 }));
   }
 
   const fg = cfg.iconForeground && join(design, cfg.iconForeground);

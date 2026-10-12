@@ -13,6 +13,7 @@ export function evaluate(s) {
   // Integrity
   if (s.bodyPlatform !== s.platform)
     add("platform-mismatch", "error", `file is under ${s.platform}/ but <body data-platform="${s.bodyPlatform}">`);
+  for (const b of s.brokenIllustrations ?? []) add("broken-illustration", "error", `${b.href}: ${b.reason} — it renders blank`);
   for (const f of s.failedFonts) add("font-load-failed", "error", `font "${f}" failed to load — check fonts.css path`);
   if (s.scrollWidth > s.viewport.width) add("overflow-x", "error", `content is ${s.scrollWidth}px wide in a ${s.viewport.width}px screen`);
 

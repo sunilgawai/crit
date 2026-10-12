@@ -20,6 +20,7 @@ Read this in Phase 8. Store assets are the first thing anyone sees of the app. T
   "background": "#F3EEE4",
   "ink": "#1C1A17",
   "headlineFont": "'Fraunces Variable', serif",
+  "headlineWeight": 400,
   "ios":     [{ "image": "renders/screens/ios/01-home.png",     "headline": "Every plant, watered on time." }],
   "android": [{ "image": "renders/screens/android/01-home.png", "headline": "Every plant, watered on time." }],
   "icon": "store/icon.svg",
@@ -30,6 +31,7 @@ Read this in Phase 8. Store assets are the first thing anyone sees of the app. T
 ```
 
 - Paths are relative to `design/`.
+- `headlineWeight` defaults to 400 and is never synthesised: use a weight the font actually has (Instrument Serif and DM Serif Display only have 400).
 - Render the screens first (`render.mjs`).
 - `background` can differ per platform only by running `store.mjs` twice with edited configs; usually one world colour is right for both stores.
 - If the screenshots' own grounds match `background`, the device edge disappears. Pick a store background one step deeper or lighter than the app's world (e.g. `--world-2`), or the signal colour if the headline ink still passes contrast.

@@ -155,7 +155,7 @@ Each of the three directions in Phase 2 uses a **different** archetype.
 
 ## 6. Illustration
 
-All illustration is hand-written SVG or CSS. Pick **one** style per app and keep its rules on every screen. Reusable pieces go in `design/illustrations.svg` as `<symbol id="…" viewBox="…">`. Use them with `<svg><use href="../../illustrations.svg#id"/></svg>`.
+All illustration is hand-written SVG or CSS. `illustrations.svg` is XML: a double hyphen inside a `<!-- comment -->` (e.g. naming a CSS variable) makes the whole file invalid and every symbol renders blank (the scanner reports `broken-illustration`). Use `vector-effect="non-scaling-stroke"` on strokes so one symbol drawn at several sizes keeps one stroke weight. Pick **one** style per app and keep its rules on every screen. Reusable pieces go in `design/illustrations.svg` as `<symbol id="…" viewBox="…">`. Use them with `<svg><use href="../../illustrations.svg#id"/></svg>`.
 
 **Thick-outline flat** (garden, mole, delivery)
 - Strokes 3–4px at 1× in `ink`, `stroke-linejoin: round`, `stroke-linecap: round`.

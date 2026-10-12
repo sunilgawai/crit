@@ -159,7 +159,7 @@ node "$SKILL/scripts/sheet.mjs" design/renders/screens/ios/*.png --out design/re
 3. **Record** the critic's reply verbatim in `design/critique/<batch>-round-<n>.md`.
    Check the reply's `## Screens opened` lists every screen in the batch. If it doesn't, dispatch a fresh critic on the **same** renders. That re-run doesn't count as a round.
 4. **PASS** → the batch is done. You may still apply its one change if it's small; then re-render and rescan, but don't run another critic round. **FAIL** → apply **the one change** first (and the "Also" notes when they're cheap and consistent with the concept), add it to the "changes applied" list, then go back to step 0.
-5. **At most 4 rounds.** If round 4 still fails, keep the best-scoring round's files (restore them from git or your copies) and carry its open complaints into `handoff.md`.
+5. **At most 4 rounds.** If round 4 still fails, keep the best-scoring round's files (restore them from `design/critique/<batch>-round-<n>-files/`) and carry its open complaints into `handoff.md`.
 
 ## Red flags
 

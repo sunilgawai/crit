@@ -44,3 +44,17 @@ test("optional entries can be left out", { timeout: 60_000 }, () => {
   assert.ok(existsSync(join(cwd, "design/store/out/ios/icon-1024.png")));
   assert.ok(!existsSync(join(cwd, "design/store/out/android/feature-graphic.png")));
 });
+
+test("Play icon keeps an alpha channel (32-bit PNG)", { timeout: 60_000 }, () => {
+  const cwd = fixtureProject();
+  writeFileSync(join(cwd, "design/store/store.json"), JSON.stringify({ background: "#fff", ink: "#111", ios: [], android: [], icon: "store/icon.svg" }));
+  assert.equal(store(cwd).status, 0);
+  assert.equal(meta(join(cwd, "design/store/out/android/icon-512.png")).colorType, 6);
+});
+
+test("headline weight comes from store.json and is never synthesised", async () => {
+  const { shotHtml } = await import("../lib/store.mjs");
+  const html = shotHtml({ image: "x.png", headline: "Hi", bg: "#fff", ink: "#111", platform: "ios", weight: 400 });
+  assert.match(html, /font-weight:400/);
+  assert.match(html, /font-synthesis:none/);
+});
