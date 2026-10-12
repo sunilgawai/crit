@@ -68,3 +68,12 @@ test("nothing to build, or an unknown key, exits 2 instead of a silent success",
   assert.equal(r.status, 2);
   assert.match(r.stderr, /screenshots/);
 });
+
+test("an icon that pulls shapes from another file fails loudly (it would render blank)", () => {
+  const cwd = fixtureProject();
+  writeFileSync(join(cwd, "design/store/icon.svg"), `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><use href="../illustrations.svg#sun"/></svg>`);
+  writeFileSync(join(cwd, "design/store/store.json"), JSON.stringify({ background: "#fff", ink: "#111", ios: [], android: [], icon: "store/icon.svg" }));
+  const r = store(cwd);
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /standalone/);
+});

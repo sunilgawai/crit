@@ -1,4 +1,4 @@
-/* Device frame for screen files. Provided by app-designer-pro — do not edit;
+/* Device frame for screen files. Provided by crit — do not edit;
    put design decisions in tokens.css. */
 html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; }
 *, *::before, *::after { box-sizing: border-box; }

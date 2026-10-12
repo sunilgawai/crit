@@ -134,6 +134,7 @@ export async function collect() {
   for (const l of document.querySelectorAll('link[rel~="stylesheet"]'))
     if ((await load(l.href)) === null) missingStylesheets.push(l.getAttribute("href"));
 
+  const covered = [];
   const texts = [], targets = [], gradients = [], media = [], cardGroups = [], priceTexts = [];
   const colorMap = new Map();
   const addColor = (css, role, area, interactive) => {
@@ -168,18 +169,38 @@ export async function collect() {
         color: norm(cs.color),
         bg: inSvg ? null : backdrop(el, r),
         align: cs.textAlign === "start" ? "left" : cs.textAlign,
-        allowEmoji: Boolean(el.closest("[data-allow-emoji]")),
+        allowEmoji: Boolean(el.closest("[data-allow-emoji], [data-user-content]")),
+        userContent: Boolean(el.closest("[data-user-content]")),
         inSvg,
       };
       texts.push(t);
       addColor(norm(cs.color), "text", 0, interactive);
       if (!inSvg) {
-        // Measure the glyphs, not the box: nowrap text can spill out of a box that fits.
-        const range = document.createRange();
-        range.selectNodeContents(el);
-        const tr = range.getBoundingClientRect();
-        maxRight = Math.max(maxRight, r.right, tr.right);
-        minLeft = Math.min(minLeft, r.left, tr.left);
+        // Measure the glyphs, not the box (nowrap text can spill out of a box that fits), one text
+        // node at a time: ranges over mixed inline-block content can report rects off the line box.
+        for (const n of el.childNodes) {
+          if (n.nodeType !== 3 || !n.textContent.trim()) continue;
+          const range = document.createRange();
+          range.selectNode(n);
+          const tr = range.getBoundingClientRect();
+          maxRight = Math.max(maxRight, r.right, tr.right);
+          minLeft = Math.min(minLeft, r.left, tr.left);
+          // Is the text visible, or does something sit on top of its centre?
+          const cx = Math.min(Math.max(tr.left + tr.width / 2, 0), vw - 1);
+          const cy = Math.min(Math.max(tr.top + tr.height / 2, 0), vh - 1);
+          const top = document.elementFromPoint(cx, cy);
+          if (top && top !== el && !el.contains(top) && !top.contains(el) && !isChrome(top)) {
+            // Only layers that paint something count; a transparent wrapper on top hides nothing.
+            let cover = top, opaque = false, paints = false;
+            for (; cover && !cover.contains(el); cover = cover.parentElement) {
+              const cs2 = getComputedStyle(cover);
+              if (cover instanceof SVGElement || /^(img|canvas|video)$/.test(cover.localName) || alpha(cs2.backgroundColor) >= 0.9 || cs2.backgroundImage !== "none") { opaque = paints = true; break; }
+              if (alpha(cs2.backgroundColor) > 0) { paints = true; break; }
+            }
+            if (paints) covered.push({ text: text.slice(0, 40), by: top.closest("button, a, nav, [role]")?.localName ?? top.localName, opaque });
+          }
+          break;
+        }
       }
       if (PRICE.test(text)) priceTexts.push({ fontSize: t.fontSize, paywallRole: el.closest("[data-paywall]")?.dataset.paywall ?? null });
     }
@@ -222,6 +243,6 @@ export async function collect() {
     viewport: { width: vw, height: vh },
     // Width spanned by text and controls (illustrations may bleed off the edge on purpose).
     scrollWidth: Math.ceil(maxRight - minLeft),
-    failedFonts, missingFonts, missingStylesheets, brokenIllustrations, texts, targets, colors: [...colorMap.values()], gradients, media, cardGroups, paywall, priceTexts,
+    covered, failedFonts, missingFonts, missingStylesheets, brokenIllustrations, texts, targets, colors: [...colorMap.values()], gradients, media, cardGroups, paywall, priceTexts,
   };
 }

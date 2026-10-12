@@ -1,4 +1,32 @@
-# Evaluation results — 2026-10-13
+# Evaluation results
+
+## Clean run — 2026-10-13 (the numbers to quote)
+
+Run after removing every brief-derived example from `references/`. The baselines are unchanged from the first run (they never saw the references). **Every score below comes from a fresh critic subagent, scoring round-1 style with no concept given, on each project's final iOS screens.** Skill and baseline were scored the same way.
+
+| Brief | Plain Claude | Crit | Δ |
+|---|---|---|---|
+| A — Split (housemates) | 6.0 FAIL · concept 5, memorability 5, hero 7 | **8.4 PASS** · concept 9, memorability 9, hero 8 | **+2.4** |
+| B — Margin (book club) | 7.5 FAIL · concept 8, memorability 7, hero 7 | **8.1 FAIL** · concept 9, memorability 8, hero 7 | +0.6 |
+
+What a stranger would say:
+- A, plain Claude: "A clean, yellow-and-cream bill splitter for flatmates."
+- A, Crit: "the flatshare app where your house is a cutaway dollhouse and each flatmate's window lights up once they've paid."
+- B, plain Claude: "the book club app where your friends' notes look like lined index cards passed in class."
+- B, Crit: "each friend is a coloured ribbon hanging out of the same green hardback, and yours is the amber one."
+
+Reading it honestly:
+- Crit wins on concept and memorability in both briefs. It clears the full pass rule on A only.
+- On B, the critic still wants a stronger home-screen hero.
+- Both skill runs reported PASS from their own loop, then changed screens after passing without re-scoring. The blind score is the honest one, and on B it disagrees.
+- Remaining caveats:
+  - the critic is the same model family as the designer;
+  - Crit spent ~33 minutes per run against ~15 for the baseline;
+  - n = 2 briefs.
+
+---
+
+# First run — 2026-10-13 (superseded: contaminated)
 
 Same brief, plain Claude (baseline) vs a subagent following the skill. Scores come from fresh critic subagents (`agents/critic.md`); baselines were scored blind, as round 1.
 

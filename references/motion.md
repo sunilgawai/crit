@@ -40,7 +40,8 @@ A scene is an HTML page in `design/motion/` that:
    - `width` and `height` are output pixels and must be even.
    - The page is laid out at `width/scale × height/scale` CSS px.
 2. Animates **only** with CSS animations or Web Animations API animations that exist at load (use `animation-delay` to sequence; `infinite` is fine). `capture.mjs` pauses every animation in every frame (including iframes) and seeks it to each frame's time. JS timers, `requestAnimationFrame` loops and CSS transitions triggered later **will not be captured**.
-3. Embeds screens with `<iframe src="../screens/ios/01-home.html">` inside a device frame. Animations inside the screen files play too, with time starting at load. To hold a screen's animation until a moment, give it a delay.
+3. Screens may contain their own entry animations and idle loops. `render.mjs` and `scan.mjs` show every screen at rest (entry animations finished, loops paused at their start), so renders and store screenshots never catch a half-faded element. Scenes play them.
+4. Embeds screens with `<iframe src="../screens/ios/01-home.html">` inside a device frame. Animations inside the screen files play too, with time starting at load. To hold a screen's animation until a moment, give it a delay.
 
 Sizes:
 - **1080 × 1920**: Reels, TikTok, Stories, App Store preview-style (scale 2 → a 540 × 960 canvas).

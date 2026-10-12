@@ -80,3 +80,9 @@ test("segmented-control segments may be 28pt tall (the control pads its hit area
   s.targets.push({ label: "Tiny", width: 150, height: 24, segmented: true });
   assert.ok(ids(s).includes("touch-target"));
 });
+test("user content (quotes, names people typed) is exempt from copy and emoji rules", () => {
+  const s = base();
+  s.texts.push({ ...s.texts[1], text: "“If we had a keen vision and feeling of all ordinary human life, it would be like hearing the grass grow!” 🔥", userContent: true, allowEmoji: true });
+  const rules = ids(s);
+  for (const r of ["long-sentence", "emoji-icon", "exclamations"]) assert.ok(!rules.includes(r), r);
+});

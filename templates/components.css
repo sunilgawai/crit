@@ -1,0 +1,2 @@
+/* Components shared by two or more screens (buttons, cards, tab bar, list rows).
+   Keep platform differences in the screen files, or match their specificity: see references/android.md. */

@@ -12,7 +12,7 @@ const run = (script, cwd, ...args) =>
 test("init creates the design tree and does not overwrite", () => {
   const cwd = mkdtempSync(join(tmpdir(), "adp-"));
   assert.equal(run("init.mjs", cwd).status, 0);
-  for (const p of ["screens/ios", "screens/android", "directions", "critique", "motion", "fonts", "device.css", "device.js", "tokens.css", "illustrations.svg", "store/store.json"])
+  for (const p of ["screens/ios", "screens/android", "directions", "critique", "motion", "fonts", "device.css", "device.js", "tokens.css", "components.css", "illustrations.svg", "store/store.json"])
     assert.ok(existsSync(join(cwd, "design", p)), p);
   writeFileSync(join(cwd, "design", "tokens.css"), "/* mine */");
   run("init.mjs", cwd);

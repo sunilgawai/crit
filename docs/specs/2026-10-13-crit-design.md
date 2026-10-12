@@ -1,4 +1,4 @@
-# App Designer Pro — design
+# Crit — design (drafted under the working title "App Designer Pro")
 
 A Claude Code skill that designs mobile apps (iPhone and Android) to the standard of a good studio, then produces everything needed to launch them: motion videos, human copy, onboarding and paywalls, and store assets. Built for personal use, modelled on the public description of Tobia Donadon's "App Designer Pro" (none of his files are used).
 
@@ -27,7 +27,7 @@ iPad layouts; dark-mode variants of every screen; Figma export; image-generation
 | Topic | Decision | Why |
 |---|---|---|
 | Shape | One skill folder (approach A): `SKILL.md`, `references/`, `scripts/`, `agents/critic.md` | One guided conversation, like the original; no global hooks |
-| Location | Repo `~/Career/app-designer-pro`, symlinked to `~/.claude/skills/app-designer-pro` | Versioned, tweakable, outside the portfolio repo |
+| Location | Repo `~/Career/crit`, symlinked to `~/.claude/skills/crit` | Versioned, tweakable, outside the portfolio repo |
 | Design medium | HTML/CSS screens at device size + handoff spec | Fast taste loop; same files feed renders, video and store assets |
 | Browser | Playwright's bundled Chromium | No Google Chrome on this machine |
 | Video encoding | `ffmpeg-static` npm package | No system ffmpeg; no Homebrew dependency |
@@ -133,7 +133,7 @@ All in `scripts/`, Node ESM, no build step. Each takes paths relative to the cur
 ## Folder layout
 
 ```
-app-designer-pro/
+crit/
   SKILL.md
   agents/critic.md
   references/{taste,ios,android,copy,paywalls,store-assets,motion}.md

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, readFileSync, symlinkSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -55,10 +55,21 @@ test("sheet lays four renders out in one row", () => {
 
 test("scripts run when invoked through a symlinked skill directory", () => {
   const cwd = fixtureProject();
-  const link = join(mkdtempSync(join(tmpdir(), "adp-link-")), "app-designer-pro");
+  const link = join(mkdtempSync(join(tmpdir(), "adp-link-")), "crit");
   symlinkSync(SKILL_DIR, link);
   for (const script of ["render.mjs", "scan.mjs"]) {
     const r = node(cwd, join(link, "scripts", script), "design/screens/ios/01-clean.html");
     assert.notEqual(r.stdout.trim(), "", `${script} printed nothing via symlink`);
   }
+});
+
+test("renders show the settled state, not an entry animation mid-flight", () => {
+  const cwd = fixtureProject();
+  writeFileSync(join(cwd, "design/screens/ios/09-anim.html"), `<!doctype html><html><head><link rel="stylesheet" href="../../device.css">
+    <style>@keyframes in{from{opacity:0}to{opacity:1}} i{position:absolute;left:100px;top:300px;width:100px;height:100px;background:#E8501A;animation:in 3s ease 1s both}</style></head>
+    <body data-platform="ios" style="background:#fff"><i></i></body></html>`);
+  render(cwd, "design/screens/ios/09-anim.html");
+  const png = read(join(cwd, "design/renders/screens/ios/09-anim.png"));
+  const i = (350 * 3 * png.width + 150 * 3) * 4;
+  assert.deepEqual([...png.data.slice(i, i + 3)], [0xe8, 0x50, 0x1a]);
 });

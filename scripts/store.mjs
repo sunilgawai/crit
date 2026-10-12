@@ -22,6 +22,11 @@ const need = (p) => {
   return abs;
 };
 for (const s of [...(cfg.ios ?? []), ...(cfg.android ?? [])]) need(s.image);
+for (const k of ["icon", "iconForeground", "iconBackground"]) {
+  const f = cfg[k] && join(design, cfg[k]);
+  if (f && existsSync(f) && /<use[^>]+href="(?!#)/.test(readFileSync(f, "utf8")))
+    fail(`design/${cfg[k]} uses <use href> into another file, which renders blank as an image: make the icon a standalone SVG (paste the shapes in)`);
+}
 for (const k of ["icon", "featureGraphic"]) if (cfg[k] && !existsSync(join(design, cfg[k]))) console.log(`! skipping ${k}: design/${cfg[k]} not found`);
 
 const out = join(design, "store", "out");
