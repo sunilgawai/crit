@@ -1,4 +1,4 @@
-import { existsSync, statSync } from "node:fs";
+import { existsSync, realpathSync, statSync } from "node:fs";
 import { readdir } from "node:fs/promises";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -55,5 +55,15 @@ export function requireDesignDir(cwd = process.cwd()) {
   } catch (e) {
     if (e instanceof DesignDirMissing) fail(e.message);
     throw e;
+  }
+}
+
+/** True when the module at `metaUrl` is the script node was asked to run (symlinks resolved). */
+export function isMain(metaUrl) {
+  if (!process.argv[1]) return false;
+  try {
+    return realpathSync(fileURLToPath(metaUrl)) === realpathSync(process.argv[1]);
+  } catch {
+    return false;
   }
 }

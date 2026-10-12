@@ -2,7 +2,7 @@
 // Usage: node render.mjs <files|dirs…>  — screens → PNG at device resolution in design/renders/.
 import { mkdirSync } from "node:fs";
 import { dirname, relative } from "node:path";
-import { expandInputs, fail, outPathFor, requireDesignDir } from "./lib/paths.mjs";
+import { expandInputs, fail, isMain, outPathFor, requireDesignDir } from "./lib/paths.mjs";
 import { DEVICES, launch, openScreen } from "./lib/browser.mjs";
 
 export async function renderFile(browser, file, design) {
@@ -15,7 +15,7 @@ export async function renderFile(browser, file, design) {
   return out;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMain(import.meta.url)) {
   const design = requireDesignDir();
   const files = await expandInputs(process.argv.slice(2));
   if (!files.length) fail(`no .html files matched: ${process.argv.slice(2).join(" ") || "(no arguments)"}`);

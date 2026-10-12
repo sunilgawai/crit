@@ -2,7 +2,7 @@
 // Usage: node scan.mjs <files|dirs…> [--json]
 // Deterministic checks for AI-design tells, copy, platform and paywall rules. Exit 1 on any error.
 import { relative } from "node:path";
-import { expandInputs, fail } from "./lib/paths.mjs";
+import { expandInputs, fail, isMain } from "./lib/paths.mjs";
 import { launch, openScreen } from "./lib/browser.mjs";
 import { collect } from "./lib/snapshot.mjs";
 import { evaluate } from "./lib/rules.mjs";
@@ -17,7 +17,7 @@ export async function scanFile(browser, file) {
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMain(import.meta.url)) {
   const args = process.argv.slice(2);
   const json = args.includes("--json");
   const files = await expandInputs(args.filter((a) => a !== "--json"));

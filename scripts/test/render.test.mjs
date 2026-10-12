@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, symlinkSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { PNG } from "pngjs";
@@ -45,4 +46,14 @@ test("sheet lays four renders out in one row", () => {
   assert.equal(r.status, 0, r.stderr);
   const [w, h] = size(join(cwd, "design/renders/sheet.png"));
   assert.ok(w > h, `${w}x${h}`);
+});
+
+test("scripts run when invoked through a symlinked skill directory", () => {
+  const cwd = fixtureProject();
+  const link = join(mkdtempSync(join(tmpdir(), "adp-link-")), "app-designer-pro");
+  symlinkSync(SKILL_DIR, link);
+  for (const script of ["render.mjs", "scan.mjs"]) {
+    const r = node(cwd, join(link, "scripts", script), "design/screens/ios/01-clean.html");
+    assert.notEqual(r.stdout.trim(), "", `${script} printed nothing via symlink`);
+  }
 });
