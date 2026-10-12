@@ -42,10 +42,18 @@ Requirements:
 
 You don't need Chrome or ffmpeg: Crit uses Playwright's Chromium and `ffmpeg-static`.
 
-```bash
-git clone https://github.com/sunilgawai/crit ~/.claude/skills/crit
-node ~/.claude/skills/crit/scripts/doctor.mjs   # first run installs dependencies and downloads Chromium (a few hundred MB)
+In Claude Code:
+
 ```
+/plugin marketplace add sunilgawai/crit
+/plugin install crit@crit
+```
+
+That's it. The first time you use it, Crit runs its `doctor` script, which installs its dependencies and downloads Chromium (a few hundred MB). After an update the plugin lives in a new folder, so `doctor` installs again (about a minute).
+
+- **Update:** `claude plugin update crit@crit`.
+- **Installed the old way** (`git clone` into `~/.claude/skills/crit`)? Delete that folder after installing the plugin. A personal skill with the same name hides the plugin's.
+- **npm 11 with install scripts restricted?** Allow ffmpeg's download script once: `npm approve-scripts ffmpeg-static`.
 
 ## Use
 
@@ -64,7 +72,7 @@ brief → 3 directions → system → iOS ─┐                ┌→ motion
            each batch:  render → scan → critique → one change → repeat (max 4)
 ```
 
-- **The bar** lives in `references/taste.md`:
+- **The bar** lives in `plugin/skills/crit/references/taste.md`:
   - a world per app,
   - one signal colour,
   - one hero per screen at an extreme scale,
@@ -72,7 +80,7 @@ brief → 3 directions → system → iOS ─┐                ┌→ motion
   - illustration the app owns,
   - human copy,
   - native craft.
-- **The scanner** (`scripts/scan.mjs`) runs 25 deterministic rules in Chromium:
+- **The scanner** (`plugin/skills/crit/scripts/scan.mjs`) runs 25 deterministic rules in Chromium:
   - AI-design tells: Inter for display text, Tailwind indigo, purple-to-blue gradients, emoji icons;
   - contrast measured against what's actually drawn behind the text;
   - text hidden under bars or buttons;
@@ -80,7 +88,7 @@ brief → 3 directions → system → iOS ─┐                ┌→ motion
   - banned phrases;
   - paywall disclosures;
   - fonts, stylesheets and illustrations that silently fail to load.
-- **The critic** (`agents/critic.md`) scores eight criteria from 1 to 10.
+- **The critic** (`plugin/skills/crit/agents/critic.md`) scores eight criteria from 1 to 10.
   - It passes only when concept, memorability and hero are each at least 8 and the mean is at least 8.
   - "Clean, modern, minimal" with nothing more specific caps memorability at 6.
   - Each round it asks for exactly **one** change, and it sees the history of earlier changes, so critics don't undo each other.

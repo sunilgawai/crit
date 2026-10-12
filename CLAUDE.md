@@ -2,12 +2,26 @@
 
 Crit is a Claude Code skill: an orchestrated design workflow (`SKILL.md`) that designs iPhone and Android apps as HTML, judges them with a deterministic scanner and a strict critic subagent, and exports renders, MP4s and store assets. Design authority: `docs/specs/2026-10-13-crit-design.md`. Eval method and history: `evals/README.md`, `evals/results.md`.
 
+**Layout.**
+- The repo root is a plugin marketplace: `.claude-plugin/marketplace.json` points to `./plugin`.
+- `plugin/` is the plugin: `plugin/.claude-plugin/plugin.json`.
+- `plugin/skills/crit/` is the skill itself. Paths below (`SKILL.md`, `references/`, `agents/`, `scripts/`) are relative to it.
+- Keep `agents/` inside the skill folder. A top-level `agents/` in the plugin would register `critic.md` as a subagent, and it's a prompt the skill reads.
+- `npm test` and `npm run validate` (strict validation of both manifests) work from the repo root.
+
 The repo has two halves that change for different reasons:
 
 - **Prose the model runs**: `SKILL.md` (phases, quality loop), `references/*.md` (taste, platforms, copy, paywalls, store, motion), `agents/critic.md`. Changes here change design quality; verify them with an eval (below).
 - **Mechanics**: `scripts/*.mjs` are thin CLIs over pure functions in `scripts/lib/`, tested with `node:test` (`npm test`; one file: `node --test scripts/test/scan.test.mjs`). Changes here are verified by tests.
 
-The installed skill is a symlink to this folder (`~/.claude/skills/crit`), so every edit is live in real design sessions the moment you save.
+For development, `~/.claude/skills/crit` is a symlink to `plugin/skills/crit`, so every edit is live in real design sessions the moment you save.
+
+**Test the plugin path with that symlink removed.** A personal skill with the same name and folder hides the plugin's. Run `claude --plugin-dir plugin` and check that `crit:crit` loads, then restore the link.
+
+**Releasing:**
+1. Bump `version` in `plugin/.claude-plugin/plugin.json`.
+2. `npm run validate` must pass.
+3. Merge to `master`. Users get the release with `claude plugin update crit@crit`.
 
 ## Mechanics
 

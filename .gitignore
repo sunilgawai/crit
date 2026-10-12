@@ -1,4 +1,4 @@
 node_modules/
-scripts/test/.out/
+**/scripts/test/.out/
 evals/runs/
 .superpowers/

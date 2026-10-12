@@ -1,0 +1,10 @@
+{
+  "name": "crit",
+  "description": "Designs iPhone and Android apps to a studio standard, judged by a strict critic, and makes the launch kit: motion, paywalls, store assets.",
+  "version": "0.1.0",
+  "author": { "name": "Sunil Gawai" },
+  "homepage": "https://github.com/sunilgawai/crit",
+  "repository": "https://github.com/sunilgawai/crit",
+  "license": "MIT",
+  "keywords": ["design", "ios", "android", "app-design", "design-critique", "app-store", "paywall"]
+}
