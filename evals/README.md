@@ -1,0 +1,17 @@
+# Evaluations
+
+The skill is tested the way skills should be: the same brief, run once by a plain Claude subagent (**baseline**) and once by a subagent following the skill (**skill**). Both outputs are rendered with `render.mjs`, laid out with `sheet.mjs`, scanned with `scan.mjs` and scored by the critic (`agents/critic.md`) in fresh subagents that don't know which run they're judging.
+
+Runs live in `evals/runs/<date>/<brief>/{baseline,skill}/` (gitignored). Results are summarised in `results.md`.
+
+## Baseline prompt
+
+> Design the main iOS screens of this app as HTML files: one file per screen, each laid out for a 402×874 CSS px iPhone viewport with a realistic status bar. Put them in `<dir>/design/screens/ios/`, named `01-….html` and so on. Brief: <brief>
+
+## Skill prompt
+
+> Read `~/.claude/skills/app-designer-pro/SKILL.md` and follow it exactly, in autonomous mode (take the critic's pick at every ★ gate; don't ask questions). `$SKILL` is `~/.claude/skills/app-designer-pro`. The project root is `<dir>`. Brief: <brief>. Run phases <range>.
+
+## Pass condition
+
+Both briefs: the skill run passes its own critic, and beats the baseline's critic mean by ≥ 2 points. By eye, the skill output must not look AI-made.
