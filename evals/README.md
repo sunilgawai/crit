@@ -2,7 +2,7 @@
 
 The skill is tested the way skills should be: the same brief, run once by a plain Claude subagent (**baseline**) and once by a subagent following the skill (**skill**). Both outputs are rendered with `render.mjs`, laid out with `sheet.mjs`, scanned with `scan.mjs` and scored by the critic (`agents/critic.md`) in fresh subagents that don't know which run they're judging.
 
-Runs live in `evals/runs/<date>/<brief>/{baseline,skill}/` (gitignored). Results are summarised in `results.md`.
+Run projects live **outside this repo**, in `~/crit-evals/<date>/<brief>/{baseline,skill}/`. Claude Code loads `CLAUDE.md` from parent folders, so a run inside the repo would see the developer notes. Score the skill's final iOS sheet and the baseline the same way: a fresh critic, round-1 style, with the concept marked as not stated. Results are summarised in `results.md`. (The 2026-10-13 runs predate this rule and lived in `evals/runs/`, which is gitignored.)
 
 ## Baseline prompt
 
