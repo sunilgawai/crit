@@ -1,0 +1,37 @@
+/* Device frame for screen files. Provided by app-designer-pro — do not edit;
+   put design decisions in tokens.css. */
+html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; }
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-synthesis: none;
+}
+body[data-platform="ios"]     { --safe-top: 54px; --safe-bottom: 34px; }
+body[data-platform="android"] { --safe-top: 36px; --safe-bottom: 24px; }
+
+/* Status bar (injected by device.js) */
+.sb {
+  position: absolute; inset: 0 0 auto 0; z-index: 1000; pointer-events: none;
+  display: flex; align-items: center; justify-content: space-between;
+  color: #000; font-family: system-ui, BlinkMacSystemFont, sans-serif;
+}
+body[data-status="light"] .sb { color: #fff; }
+body[data-platform="ios"] .sb { height: 54px; padding: 4px 30px 0 46px; font-size: 17px; font-weight: 600; letter-spacing: -0.02em; }
+body[data-platform="android"] .sb {
+  height: 36px; padding: 2px 30px 0 30px; font-size: 14px; font-weight: 500;
+  font-family: "Roboto Flex Variable", system-ui, sans-serif;
+}
+.sb .sb-icons { display: flex; gap: 6px; align-items: center; }
+body[data-platform="ios"] .sb .sb-icons { gap: 7px; }
+.sb svg { display: block; fill: currentColor; }
+
+/* Home indicator / gesture handle */
+.home {
+  position: absolute; left: 50%; transform: translateX(-50%); z-index: 1000; pointer-events: none;
+  background: #000; border-radius: 99px;
+}
+body[data-status="light"] .home { background: #fff; }
+body[data-platform="ios"] .home { width: 134px; height: 5px; bottom: 8px; }
+body[data-platform="android"] .home { width: 108px; height: 4px; bottom: 10px; opacity: .85; }

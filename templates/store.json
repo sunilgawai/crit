@@ -1,0 +1,11 @@
+{
+  "background": "#F3EEE4",
+  "ink": "#1C1A17",
+  "headlineFont": "Georgia, serif",
+  "ios": [],
+  "android": [],
+  "icon": "store/icon.svg",
+  "iconForeground": "store/icon-foreground.svg",
+  "iconBackground": "store/icon-background.svg",
+  "featureGraphic": "store/feature-graphic.html"
+}
