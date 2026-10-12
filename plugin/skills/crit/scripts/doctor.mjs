@@ -6,9 +6,9 @@ import { join } from "node:path";
 import { SKILL_DIR } from "./lib/paths.mjs";
 
 let ok = true;
-const line = (pass, msg) => {
-  console.log(`${pass ? "✓" : "✗"} ${msg}`);
-  if (!pass) ok = false;
+const line = (passed, msg) => {
+  console.log(`${passed ? "✓" : "✗"} ${msg}`);
+  if (!passed) ok = false;
 };
 
 const major = Number(process.versions.node.split(".")[0]);
