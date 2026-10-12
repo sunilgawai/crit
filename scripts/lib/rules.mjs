@@ -95,5 +95,16 @@ export function evaluate(s) {
     if (s.paywall.trial?.some((e) => e.visible) && !s.paywall["after-trial"]?.some((e) => e.visible))
       add("paywall-trial-terms", "error", `trial shown without the price charged after it ([data-paywall="after-trial"])`);
   }
-  return out;
+  return collapse(out);
+}
+
+function collapse(findings) {
+  const byKey = new Map();
+  for (const f of findings) {
+    const key = `${f.rule}|${f.detail}`;
+    const seen = byKey.get(key);
+    if (seen) seen.n++;
+    else byKey.set(key, { f, n: 1 });
+  }
+  return [...byKey.values()].map(({ f, n }) => (n > 1 ? { ...f, detail: `${f.detail} (×${n})` } : f));
 }

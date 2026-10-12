@@ -67,3 +67,10 @@ test("paywall without restore", () => { const s = paywall(); s.paywall.restore =
 test("invisible close button", () => { const s = paywall(); s.paywall.close = [{ visible: false, fontSize: 0 }]; assert.ok(ids(s).includes("paywall-missing")); });
 test("per-week breakdown bigger than billed price", () => { const s = paywall(); s.priceTexts.push({ fontSize: 40, paywallRole: null }); assert.ok(ids(s).includes("paywall-price-not-prominent")); });
 test("trial without after-trial price", () => { const s = paywall(); s.paywall.trial = [{ visible: true, fontSize: 15 }]; assert.ok(ids(s).includes("paywall-trial-terms")); s.paywall["after-trial"] = [{ visible: true, fontSize: 15 }]; assert.ok(!ids(s).includes("paywall-trial-terms")); });
+test("repeated identical findings collapse with a count", () => {
+  const s = base();
+  s.texts.push({ ...s.texts[1], text: "🔥 Streak" }, { ...s.texts[1], text: "🔥 Streak" });
+  const emoji = evaluate(s).filter((f) => f.rule === "emoji-icon");
+  assert.equal(emoji.length, 1);
+  assert.match(emoji[0].detail, /\(×2\)$/);
+});
