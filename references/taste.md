@@ -68,7 +68,7 @@ Worked examples:
 | Sleep | A village going to sleep, window by window | dusk indigo (not purple-blue gradient!), lamp amber | windows lighting off | lights fade one by one |
 | Fitness | An athletics track, lane lines | track terracotta, lane white, grass green | lane geometry, numbered bibs | lane lines sweep |
 | Language learning | A café menu chalkboard | chalk green-black, chalk white, one awning stripe | chalk lettering, café objects | chalk writes on |
-| Habit tracker | A paper cut-out calendar on a fridge | craft-paper colours | cut-paper shapes with offset shadows | pieces fold into place |
+| Habit tracker | A paper cut-out calendar pinned above a desk | craft-paper colours | cut-paper shapes with offset shadows | pieces fold into place |
 | Plant care | A greenhouse logbook | glass green, terracotta, label white | botanical line drawings with tags | leaves unfurl |
 | Meditation | Stones stacked on a riverbank | river grey-green, warm stone | soft-shaded pebbles | stack balances |
 
