@@ -109,7 +109,12 @@ export async function collect() {
       if (PRICE.test(text)) priceTexts.push({ fontSize: t.fontSize, paywallRole: el.closest("[data-paywall]")?.dataset.paywall ?? null });
     }
     if (el.matches(TARGETS)) {
-      targets.push({ label: el.getAttribute("aria-label") || el.innerText.trim().slice(0, 30) || el.localName, width: r.width, height: r.height });
+      targets.push({
+        label: el.getAttribute("aria-label") || el.innerText.trim().slice(0, 30) || el.localName,
+        width: r.width, height: r.height,
+        // Segmented-control segments are drawn ~32pt tall; the control pads their hit area.
+        segmented: Boolean(el.closest('[role="tablist"]')),
+      });
       maxRight = Math.max(maxRight, r.right);
     }
 
@@ -118,7 +123,9 @@ export async function collect() {
       const ks = getComputedStyle(k);
       return alpha(ks.backgroundColor) > 0 || parseFloat(ks.borderTopLeftRadius) > 0;
     });
-    if (kids.length >= 3 && !inSvg) {
+    // Tab bars and segmented controls repeat items by design.
+    const isBar = el.matches('nav, [role="tablist"], [role="navigation"], [role="tabbar"]') || Boolean(el.closest("nav"));
+    if (kids.length >= 3 && !inSvg && !isBar) {
       const sig = new Map();
       for (const k of kids) {
         const kr = k.getBoundingClientRect();

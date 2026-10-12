@@ -29,3 +29,9 @@ test("installing twice does not duplicate blocks", () => {
 test("unknown family lists the shortlist", () => {
   assert.throws(() => installFonts(["comic-sans"], "/tmp"), /fraunces/);
 });
+
+test("variable fonts keep their width/optical axes when the package has them", () => {
+  const dir = mkdtempSync(join(tmpdir(), "adp-fonts-"));
+  installFonts(["bricolage-grotesque"], dir);
+  assert.match(readFileSync(join(dir, "fonts.css"), "utf8"), /bricolage-grotesque-latin-standard-normal\.woff2/);
+});

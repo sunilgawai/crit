@@ -73,3 +73,25 @@ test("translucent backgrounds are composited before checking contrast", () => {
   const r = scan(cwd, f);
   assert.ok(!r.findings.some((x) => x.rule === "contrast"), JSON.stringify(r.findings));
 });
+
+test("a tab bar in <nav> is not identical cards; a segmented control is not a small target", () => {
+  const cwd = fixtureProject();
+  const f = join(cwd, "design/screens/ios/07-tabs.html");
+  const tab = (t) => `<a style="display:block;width:80px;height:49px;border-radius:12px;background:#E6DFD2;color:#1C1A17">${t}</a>`;
+  writeFileSync(f, `<!doctype html><html><head><link rel="stylesheet" href="../../device.css"></head>
+    <body data-platform="ios" data-screen-kind="main" style="background:#F3EEE4;color:#1C1A17;font:15px system-ui">
+    <div role="tablist" style="display:flex;margin:120px 20px 0"><button role="tab" style="height:32px;width:170px">Type it</button><button role="tab" style="height:32px;width:170px">Snap it</button></div>
+    <nav style="position:absolute;bottom:34px;left:0;right:0;display:flex;justify-content:space-around">${tab("Today")}${tab("Book")}${tab("Shelf")}${tab("You")}</nav></body></html>`);
+  const rules = scan(cwd, f).findings.map((x) => x.rule);
+  assert.ok(!rules.includes("identical-cards"), rules.join());
+  assert.ok(!rules.includes("touch-target"), rules.join());
+});
+
+test("--copy lists each screen's visible text (no device chrome) for the copy pass", () => {
+  const r = spawnSync(process.execPath, [join(SKILL_DIR, "scripts/scan.mjs"), "design/screens/ios/01-clean.html", "--copy"], { cwd: fixtureProject(), encoding: "utf8" });
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(r.stdout, /01-clean\.html/);
+  assert.match(r.stdout, /Eighteen months to the road bike/);
+  assert.match(r.stdout, /Add money/);
+  assert.doesNotMatch(r.stdout, /9:41/);
+});

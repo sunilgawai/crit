@@ -57,7 +57,7 @@ export function evaluate(s) {
   }
   const min = s.platform === "android" ? 48 : 44;
   for (const t of s.targets)
-    if (t.width < min || t.height < min) add("touch-target", "error", `"${t.label}" is ${Math.round(t.width)}×${Math.round(t.height)}, needs ${min}×${min}`);
+    if (t.segmented ? t.width < min || t.height < 28 : t.width < min || t.height < min) add("touch-target", "error", `"${t.label}" is ${Math.round(t.width)}×${Math.round(t.height)}, needs ${min}×${min}`);
 
   // Personality warnings
   const buckets = new Set();

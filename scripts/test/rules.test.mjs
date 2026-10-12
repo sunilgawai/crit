@@ -74,3 +74,9 @@ test("repeated identical findings collapse with a count", () => {
   assert.equal(emoji.length, 1);
   assert.match(emoji[0].detail, /\(×2\)$/);
 });
+test("segmented-control segments may be 28pt tall (the control pads its hit area)", () => {
+  const s = base(); s.targets.push({ label: "Type it", width: 150, height: 32, segmented: true });
+  assert.ok(!ids(s).includes("touch-target"));
+  s.targets.push({ label: "Tiny", width: 150, height: 24, segmented: true });
+  assert.ok(ids(s).includes("touch-target"));
+});

@@ -25,9 +25,12 @@ export const SHORTLIST = {
 function cssFilesFor(pkgDir, variable) {
   const all = readdirSync(pkgDir).filter((f) => f.endsWith(".css"));
   if (variable) {
-    const normal = all.includes("full.css") ? "full.css" : "index.css";
-    const italic = all.includes("full-italic.css") ? "full-italic.css" : all.includes("wght-italic.css") ? "wght-italic.css" : null;
-    return [normal, italic].filter(Boolean);
+    // Prefer the file with the most axes: full (all) > standard (wght, wdth, opsz…) > index (wght).
+    const pick = (...names) => names.find((n) => all.includes(n)) ?? null;
+    return [
+      pick("full.css", "standard.css", "index.css"),
+      pick("full-italic.css", "standard-italic.css", "wght-italic.css"),
+    ].filter(Boolean);
   }
   return all.filter((f) => /^\d+(-italic)?\.css$/.test(f)).sort();
 }
