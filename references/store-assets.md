@@ -51,7 +51,8 @@ Read this in Phase 8. Store assets are the first thing anyone sees of the app. T
 - It comes from the concept: the mascot's face, the world's object, the hero shape. Not a letter in a gradient square, and no text.
 - Use at most 2–3 colours, from the world palette and the signal colour.
 - iOS: draw on a full square; don't round the corners yourself. Android adaptive icon: put the subject in the foreground layer within the safe circle and the colour field in the background layer.
-- Draw it as SVG with `viewBox="0 0 1024 1024"` (adaptive layers: `0 0 108 108`).
+- Draw it as a **standalone** SVG with `viewBox="0 0 1024 1024"` (adaptive layers: `0 0 108 108`): paste the shapes in rather than `<use>`-ing them from `illustrations.svg`. Icons are rendered as images, which can't reach other files (`store.mjs` refuses them).
+- Check it small: `sips -Z 60 design/store/out/ios/icon-1024.png --out /tmp/icon-60.png`, then Read it.
 
 ## The feature graphic (Play)
 

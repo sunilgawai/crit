@@ -12,6 +12,7 @@ const files = [
   ["device.css", "device.css"],
   ["device.js", "device.js"],
   ["tokens.css", "tokens.css"],
+  ["components.css", "components.css"],
   ["illustrations.svg", "illustrations.svg"],
   ["store.json", "store/store.json"],
 ];

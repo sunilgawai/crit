@@ -13,6 +13,8 @@ export function evaluate(s) {
   // Integrity
   if (s.bodyPlatform !== s.platform)
     add("platform-mismatch", "error", `file is under ${s.platform}/ but <body data-platform="${s.bodyPlatform}">`);
+  for (const c of s.covered ?? [])
+    add("text-covered", c.opaque ? "error" : "warning", `"${c.text}" sits under a <${c.by}> — move it clear, or end the list above the bar/button`);
   for (const h of s.missingStylesheets ?? []) add("stylesheet-missing", "error", `<link href="${h}"> didn't load — check the relative path`);
   for (const m of s.missingFonts ?? [])
     add("font-missing", "error", `'${m.family}' (used by "${m.sample}") isn't installed or loaded — it renders in a fallback font. Run fonts.mjs and use the family name it prints`);
@@ -47,7 +49,7 @@ export function evaluate(s) {
     if (isPurpleBlueGradient(g)) add("purple-blue-gradient", "error", g.slice(0, 90));
   }
   for (const t of s.texts) {
-    if (!t.allowEmoji && EMOJI.test(t.text.replace(/[©®™]/g, "")))
+    if (!t.allowEmoji && !t.userContent && EMOJI.test(t.text.replace(/[©®™]/g, "")))
       add("emoji-icon", "error", `"${t.text.slice(0, 40)}" — draw an icon or illustration instead (data-allow-emoji for user content)`);
   }
   for (const t of s.texts) {
@@ -86,7 +88,8 @@ export function evaluate(s) {
   if (s.kind !== "onboarding" && s.texts.length >= 3 && s.texts.every((t) => t.align === "center"))
     add("all-centered", "warning", "every text block is centred");
 
-  out.push(...copyFindings(s.texts).map((f) => ({ screen: s.screen, ...f })));
+  // data-user-content marks text people wrote (quotes, messages): the app's voice rules don't apply.
+  out.push(...copyFindings(s.texts.filter((t) => !t.userContent)).map((f) => ({ screen: s.screen, ...f })));
 
   // Paywall
   if (s.kind === "paywall") {

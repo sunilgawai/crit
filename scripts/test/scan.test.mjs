@@ -149,3 +149,29 @@ test("an input path that doesn't exist fails instead of being skipped", () => {
   assert.equal(r.status, 2);
   assert.match(r.stderr, /andriod/);
 });
+
+test("text hidden under a pinned button or bar is flagged; text clear of it is not", () => {
+  const cwd = fixtureProject();
+  const f = join(cwd, "design/screens/ios/12-covered.html");
+  const shell = (top) => page(`<p style="position:absolute;left:20px;top:${top}px;margin:0;font:17px system-ui">Hall and stairs, Aiko, every Sunday</p>
+    <button style="position:absolute;left:20px;right:20px;bottom:60px;height:56px;border:0;border-radius:28px;background:#E8501A;color:#1C1A17">Add and split</button>`);
+  writeFileSync(f, shell(770));
+  assert.ok(scan(cwd, f).findings.some((x) => x.rule === "text-covered" && /Hall and stairs/.test(x.detail)));
+  writeFileSync(f, shell(600));
+  assert.ok(!scan(cwd, f).findings.some((x) => x.rule === "text-covered"));
+});
+
+test("right-aligned no-wrap text with an inline-block isn't overflow", () => {
+  const cwd = fixtureProject();
+  const f = join(cwd, "design/screens/ios/13-pill.html");
+  writeFileSync(f, page(`<div style="margin:120px 20px;text-align:right;white-space:nowrap;font:15px system-ui">€18.40 owes <span style="display:inline-block;padding:2px 8px;border-radius:9px;background:#E6DFD2">You</span></div>`));
+  assert.ok(!scan(cwd, f).findings.some((x) => x.rule === "overflow-x"), JSON.stringify(scan(cwd, f).findings));
+});
+
+test("a transparent layer above the text doesn't count as covering it", () => {
+  const cwd = fixtureProject();
+  const f = join(cwd, "design/screens/ios/14-layer.html");
+  writeFileSync(f, page(`<a style="position:absolute;right:20px;top:60px;padding:12px;font:15px system-ui;color:#1C1A17">Skip</a>
+    <main style="position:absolute;inset:0;z-index:2"></main>`));
+  assert.ok(!scan(cwd, f).findings.some((x) => x.rule === "text-covered"), JSON.stringify(scan(cwd, f).findings));
+});

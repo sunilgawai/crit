@@ -27,7 +27,21 @@ export async function openScreen(browser, file) {
   const page = await browser.newPage({ viewport: { width: d.width, height: d.height }, deviceScaleFactor: d.scale });
   await page.goto(pathToFileURL(file).href, { waitUntil: "load" });
   await page.evaluate(() => document.fonts.ready);
+  await settle(page);
   return { page, platform };
+}
+
+/** Show the screen at rest: finite (entry) animations jump to their end, infinite loops pause at
+ *  their start. Motion scenes are captured by capture.mjs, which seeks animations itself. */
+export async function settle(page) {
+  await page.evaluate(() => {
+    for (const a of document.getAnimations()) {
+      if (a.effect?.getComputedTiming().endTime === Infinity) {
+        a.pause();
+        a.currentTime = 0;
+      } else a.finish();
+    }
+  });
 }
 
 /** The platform font Chromium actually uses for `system-ui` (".SF NS" on macOS). */

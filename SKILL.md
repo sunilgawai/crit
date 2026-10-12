@@ -34,13 +34,14 @@ Designs an app the way a good studio would, then makes everything that sells it.
 | 4 | iOS screens | `ios.md`, `copy.md`, `paywalls.md` | `design/screens/ios/` | quality loop passes |
 | 5 | Android screens | `android.md` | `design/screens/android/` | quality loop passes |
 | 6 | Copy pass | `copy.md` | edited screens | scan clean |
+| 6b | Final crit | — | `design/critique/final-round-<n>.md` | PASS on the final files |
 | 7 | Motion | `motion.md` | `design/motion/out/*.mp4` | stills reviewed |
 | 8 | Store assets | `store-assets.md` | `design/store/out/` | sizes ✓, icon reads at 60px |
 | 9 | Handoff | — | `design/handoff.md`, `design/index.html` | — |
 
 ★ = pause for the user. Everywhere else, keep going and report progress in one line per phase. If the user says to decide everything ("you choose", "autonomous"), take the critic's pick at ★ and say what you chose.
 
-**Resuming:** look at `design/` before starting. `brief.md` means Phase 1 is done. `concept.md` means 2–3 are done. A `design/critique/<batch>-round-<n>.md` with `verdict: PASS` means that batch is done. Continue from the first unfinished phase. Never redo a finished one unless asked.
+**Resuming:** look at `design/` before starting. `brief.md` means Phase 1 is done. `concept.md` means 2–3 are done. A `design/critique/<batch>-round-<n>.md` with `verdict: PASS`, or a `round-4` file, means that batch is done. Continue from the first unfinished phase. Never redo a finished one unless asked.
 
 ### 0. Doctor + init
 
@@ -62,7 +63,7 @@ node "$SKILL/scripts/init.mjs"     # creates design/ (never overwrites)
 3. Write `design/directions/directions.md`, with one section per direction: anchor; palette (hex for world, world-2, surface, ink, ink-2, signal, illustration); fonts; archetype; illustration style; motion idea; the one sentence a stranger would say.
 4. Install every font they need: `node "$SKILL/scripts/fonts.mjs" fraunces bricolage-grotesque …`.
 5. Build each direction's **main screen**, fully realised (real copy, real illustration, tab bar), at `design/directions/<a|b|c>/main.html` (iOS). Each file carries its own tokens in a `<style>` block and links `../../fonts/fonts.css`, `../../device.css` and `../../device.js`.
-6. Run the steps below, then dispatch the critic with batch `directions` (for its `Concept` input, pass `directions.md`: there's no `concept.md` yet):
+6. Run the steps below, then dispatch the critic once with batch `directions` (for its `Concept` input, pass all of `directions.md`: there's no `concept.md` yet). This batch doesn't need to pass: its job is to pick the direction with the most potential.
    ```bash
    node "$SKILL/scripts/render.mjs" design/directions
    node "$SKILL/scripts/scan.mjs" design/directions          # fix every ✗ before going on
@@ -93,7 +94,7 @@ Read `ios.md`, `copy.md` and (if monetised) `paywalls.md`. Build every screen in
 
 ### 5. Android screens
 
-Read `android.md`. Re-design each iOS screen natively in `design/screens/android/` (same numbering). Install `roboto-flex`. Quality loop with batch `android-core`, and in every round also make a pair sheet and pass it as the critic's `Pair sheet` input:
+Read `android.md`. Re-design each iOS screen natively in `design/screens/android/` (same numbering). Install `roboto-flex`. Quality loop with batch `android-core`. Its "changes applied" list starts with everything applied during `ios-core`, so the Android critic doesn't undo iOS decisions. In every round also make a pair sheet and pass it as the critic's `Pair sheet` input:
 ```bash
 node "$SKILL/scripts/sheet.mjs" design/renders/screens/ios/03-*.png design/renders/screens/android/03-*.png design/renders/screens/ios/05-*.png design/renders/screens/android/05-*.png --out design/renders/pair-sheet.png
 ```
@@ -102,6 +103,13 @@ node "$SKILL/scripts/sheet.mjs" design/renders/screens/ios/03-*.png design/rende
 ### 6. Copy pass
 
 Run `node "$SKILL/scripts/scan.mjs" design/screens --copy` to list every screen's visible text. Follow "Phase 6" in `copy.md` across both platforms, and log each changed line (before → after, which screens) in `design/critique/copy-pass.md`. Re-render and rescan everything; the scan must be clean (no ✗).
+
+### 6b. Final crit
+
+Screens change after their batch passed: the copy pass, cross-platform fixes. Before any launch material is made from them, run the quality loop once more on the **final** files with batch `final`:
+- give the critic the iOS sheet as `Contact sheet`, the iOS PNGs as `Screens`, the pair sheet as `Pair sheet`, and the whole app's changes-applied list;
+- PASS → go on. FAIL → apply the one change on both platforms and repeat, at most 2 rounds;
+- if it still fails, carry its complaints into `handoff.md`.
 
 ### 7. Motion
 
@@ -147,18 +155,18 @@ node "$SKILL/scripts/sheet.mjs" design/renders/screens/ios/*.png --out design/re
    Read the file $SKILL/agents/critic.md. Those are your instructions: follow them exactly and reply only with the Markdown output it specifies.
    Inputs:
    - Brief: <contents of design/brief.md>
-   - Concept: <contents of design/concept.md, first section only>
+   - Concept: <contents of design/concept.md, first section only (directions batch: all of design/directions/directions.md)>
    - Platform: <ios|android> · Batch: <batch> · Round <n>
    - Contact sheet: <absolute path>
    - Screens: <absolute paths of every PNG in the batch>
-   - Changes applied in earlier rounds (keep them unless they now fail): <numbered list of every "one change" applied so far, or "none">
+   - Changes applied in earlier rounds (keep them unless they now fail): <numbered list of every "one change" applied so far in this app, across all batches, or "none">
    - Pair sheet: <absolute path, Android batches only>
    ```
    **Never** include your reasoning, your opinion of the screens or earlier scores. A new subagent every round.
 3. **Record** the critic's reply verbatim in `design/critique/<batch>-round-<n>.md`.
    **Snapshot** the files exactly as the critic scored them, before touching anything: `mkdir -p design/critique/<batch>-round-<n>-files && cp -R design/screens/<platform>/. design/critique/<batch>-round-<n>-files/` (for `directions`, copy `design/directions`). This is what you restore the best round from.
    Check the reply's `## Screens opened` lists every screen in the batch. If it doesn't, dispatch a fresh critic on the **same** renders. That re-run doesn't count as a round.
-4. **PASS** → the batch is done. You may still apply its one change if it's small; then re-render and rescan, but don't run another critic round. **FAIL** → apply **the one change** first (and the "Also" notes when they're cheap and consistent with the concept), add it to the "changes applied" list, then go back to step 1.
+4. **PASS** → the batch is done, as scored. A batch counts as passed only on files a critic actually scored, so after a PASS either stop (carry its one change into `handoff.md`) or apply it and run one more round. **FAIL** → apply **the one change** first (and the "Also" notes when they're cheap and consistent with the concept), add it to the "changes applied" list, then go back to step 1.
 5. **At most 4 rounds.** If round 4 still fails, keep the best-scoring round's files (restore them from `design/critique/<batch>-round-<n>-files/`) and carry its open complaints into `handoff.md`.
 
 ## Red flags
@@ -167,6 +175,7 @@ node "$SKILL/scripts/sheet.mjs" design/renders/screens/ios/*.png --out design/re
 |---|---|
 | "The critic passed round 1, great" | Be suspicious. Check its `Screens opened` lists every screen; if not, rerun it on the same renders. |
 | "This critic wants to undo what the last one asked for" | It shouldn't: the changes-applied list tells it what to keep. If it insists, keep the earlier change unless the new reply explains why it now fails. |
+| "It passed; I'll just apply this one small tweak" | Then it isn't passed any more. Run another round, or carry the tweak to `handoff.md`. |
 | "This warning doesn't matter" | Fix it, or write why it's intended in the critique file. |
 | "I'll show the user before scanning, to save time" | Never show unscanned, uncritiqued work, except the three directions after their scan. |
 | "Android is basically the same" | Re-read `android.md`. A ported iOS screen fails the whole point of Phase 5. |

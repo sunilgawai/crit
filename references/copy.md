@@ -47,6 +47,10 @@ Also avoid (not scanned, but the critic notices): *smart*, *intuitive*, *powerfu
 - The paywall headline is the outcome, the price line is plain and exact ("€39.99 a year"), and the trial line says what happens next ("Free for 7 days, then €39.99 a year. Cancel anytime in Settings.").
 - Store screenshot headlines: ≤ 6 words, benefit-first, the same voice as the app.
 
+## Text people wrote
+
+Quotes, book passages, messages and names typed by users aren't the app's voice. Mark their container with `data-user-content` and the scanner skips its copy and emoji rules for them (a quoted sentence may be long; a friend's message may have an emoji).
+
 ## Phase 6: the copy pass
 
 1. Extract all visible text per screen (open each HTML file; ignore the status bar).
