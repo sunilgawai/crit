@@ -1,0 +1,11 @@
+{
+  "background": "#F3EEE4",
+  "ink": "#1C1A17",
+  "headlineFont": "Georgia, serif",
+  "ios": [{ "image": "renders/screens/ios/01-clean.png", "headline": "A pot for the bike, the trip and the rainy day." }],
+  "android": [{ "image": "renders/screens/android/01-clean.png", "headline": "A pot for the bike, the trip and the rainy day." }],
+  "icon": "store/icon.svg",
+  "iconForeground": "store/icon-foreground.svg",
+  "iconBackground": "store/icon-background.svg",
+  "featureGraphic": "store/feature-graphic.html"
+}
