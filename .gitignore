@@ -2,3 +2,4 @@ node_modules/
 **/scripts/test/.out/
 evals/runs/
 .superpowers/
+config.bat
