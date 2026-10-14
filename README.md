@@ -54,6 +54,7 @@ That's it. The first time you use it, Crit runs its `doctor` script, which insta
 - **Update:** `claude plugin update crit@crit`.
 - **Installed the old way** (`git clone` into `~/.claude/skills/crit`)? Delete that folder after installing the plugin. A personal skill with the same name hides the plugin's.
 - **npm 11 with install scripts restricted?** Allow ffmpeg's download script once: `npm approve-scripts ffmpeg-static`.
+- **Privacy:** Crit sends nothing anywhere. Those first-run downloads are the only network use. See [PRIVACY.md](PRIVACY.md).
 
 ## Use
 
